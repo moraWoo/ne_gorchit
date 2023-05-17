@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ne_gorchit/widgets/elements/main_buttons.dart';
+import 'package:ne_gorchit/widgets/main_buttons.dart';
 
 class MainMenu extends StatelessWidget {
   const MainMenu({super.key});
@@ -27,7 +27,7 @@ class MainMenu extends StatelessWidget {
                         child: mainButton(
                           buttonId: 1,
                           buttonIcon: Icon(
-                            Icons.menu,
+                            Icons.restaurant_menu_outlined,
                             size: 50,
                           ),
                           buttonName: 'Меню',
@@ -109,7 +109,7 @@ class MainMenu extends StatelessWidget {
                             Icons.menu,
                             size: 50,
                           ),
-                          buttonName: 'Меню',
+                          buttonName: 'Мой счет',
                         ),
                       ),
                     ),

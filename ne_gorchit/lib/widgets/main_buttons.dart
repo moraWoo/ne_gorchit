@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ne_gorchit/widgets/elements/food_catalog.dart';
-import 'package:ne_gorchit/widgets/elements/main_buttons.dart';
+import 'package:ne_gorchit/widgets/food_catalog.dart';
+import 'package:ne_gorchit/widgets/main_buttons.dart';
 
 class mainButton extends StatelessWidget {
   final Icon buttonIcon;
@@ -21,17 +21,17 @@ class mainButton extends StatelessWidget {
         print('button tapped: $buttonId');
         switch (buttonId) {
           case 1:
-            Navigator.popAndPushNamed(context, '/widgets');
+            Navigator.popAndPushNamed(context, '/food_catalog');
           case 2:
-            Navigator.popAndPushNamed(context, '/widgets');
+            Navigator.popAndPushNamed(context, '/food_catalog');
           case 3:
-            Navigator.popAndPushNamed(context, '/widgets');
+            Navigator.popAndPushNamed(context, '/food_catalog');
           case 4:
-            Navigator.popAndPushNamed(context, '/widgets');
+            Navigator.popAndPushNamed(context, '/food_catalog');
           case 5:
-            Navigator.popAndPushNamed(context, '/widgets');
+            Navigator.popAndPushNamed(context, '/food_catalog');
           case 6:
-            Navigator.popAndPushNamed(context, '/widgets');
+            Navigator.popAndPushNamed(context, '/client_bill');
         }
       },
       style: ElevatedButton.styleFrom(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ne_gorchit/theme/app_colors.dart';
-import 'package:ne_gorchit/widgets/elements/food_catalog.dart';
+import 'package:ne_gorchit/widgets/client_bill.dart';
+import 'package:ne_gorchit/widgets/food_catalog.dart';
 import 'package:ne_gorchit/widgets/main_menu.dart';
 
 void main() {
@@ -25,7 +26,8 @@ class MainApp extends StatelessWidget {
       ),
       routes: {
         '/': (context) => MainMenu(),
-        '/widgets': (context) => FoodElement(),
+        '/food_catalog': (context) => FoodElement(),
+        '/client_bill': (context) => ClientBill(),
         // '/mainScreen': (context) => MainScreenWidget(),
         // '/mainScreen/movie_details': (context) {
         //   final arguments = ModalRoute.of(context)?.settings.arguments as int;
