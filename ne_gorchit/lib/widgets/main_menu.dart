@@ -23,8 +23,9 @@ class MainMenu extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(8.0),
                         child: mainButton(
+                          buttonId: 1,
                           buttonIcon: Icon(
                             Icons.menu,
                             size: 50,
@@ -35,8 +36,9 @@ class MainMenu extends StatelessWidget {
                     ),
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(8.0),
                         child: mainButton(
+                          buttonId: 2,
                           buttonIcon: Icon(
                             Icons.person,
                             size: 50,
@@ -56,6 +58,7 @@ class MainMenu extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: mainButton(
+                          buttonId: 3,
                           buttonIcon: Icon(
                             Icons.shield,
                             size: 50,
@@ -68,6 +71,7 @@ class MainMenu extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: mainButton(
+                          buttonId: 4,
                           buttonIcon: Icon(
                             Icons.check,
                             size: 50,
@@ -87,6 +91,7 @@ class MainMenu extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: mainButton(
+                          buttonId: 5,
                           buttonIcon: Icon(
                             Icons.reviews,
                             size: 50,
@@ -99,6 +104,7 @@ class MainMenu extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: mainButton(
+                          buttonId: 6,
                           buttonIcon: Icon(
                             Icons.menu,
                             size: 50,

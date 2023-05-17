@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ne_gorchit/theme/app_colors.dart';
+import 'package:ne_gorchit/widgets/elements/food_catalog.dart';
 import 'package:ne_gorchit/widgets/main_menu.dart';
 
 void main() {
@@ -16,7 +17,6 @@ class MainApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.mainDarkBlue,
         ),
-        primarySwatch: Colors.blue,
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: AppColors.mainDarkBlue,
           selectedItemColor: Colors.white,
@@ -24,7 +24,8 @@ class MainApp extends StatelessWidget {
         ),
       ),
       routes: {
-        '/main_menu': (context) => MainMenu(),
+        '/': (context) => MainMenu(),
+        '/widgets': (context) => FoodElement(),
         // '/mainScreen': (context) => MainScreenWidget(),
         // '/mainScreen/movie_details': (context) {
         //   final arguments = ModalRoute.of(context)?.settings.arguments as int;
@@ -35,7 +36,8 @@ class MainApp extends StatelessWidget {
         //   }
         // },
       },
-      initialRoute: '/main_menu',
+      // initialRoute: '/main_menu',
+      initialRoute: '/',
     );
   }
 }
