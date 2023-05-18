@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ne_gorchit/widgets/food_catalog.dart';
-import 'package:ne_gorchit/widgets/main_buttons.dart';
 
 class mainButton extends StatelessWidget {
   final Icon buttonIcon;
@@ -45,12 +43,12 @@ class mainButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           buttonIcon,
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
           Text(
             buttonName,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.normal,
             ),

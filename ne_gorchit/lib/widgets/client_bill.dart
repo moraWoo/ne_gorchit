@@ -7,9 +7,9 @@ class ClientBill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: Column(
+      child: const Column(
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(70.0),
             child: Text(
               'Мой счет',

@@ -52,7 +52,7 @@ class FoodItem extends StatelessWidget {
           child: Column(
             children: [
               Image(image: AssetImage(AppImages.blinchiki)),
-              Padding(
+              const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
