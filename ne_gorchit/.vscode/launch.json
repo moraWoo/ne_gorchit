@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Запустить Chrome на localhost",
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Flutter (iPhone (Ildar))",
+      "program": "lib/main.dart",
+      "deviceId": "00008030-000221C93C99402E",
+      "request": "launch",
+      "type": "dart"
+    }
+  ]
+}

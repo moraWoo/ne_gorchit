@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:ne_gorchit/widgets/main_buttons.dart';
 
-class MainMenu extends StatelessWidget {
+class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
 
+  @override
+  State<MainMenu> createState() => _MainMenuState();
+}
+
+class _MainMenuState extends State<MainMenu> {
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
@@ -27,7 +32,7 @@ class MainMenu extends StatelessWidget {
                         child: mainButton(
                           buttonId: 1,
                           buttonIcon: Icon(
-                            Icons.restaurant_menu_outlined,
+                            Icons.dining_sharp,
                             size: 50,
                           ),
                           buttonName: 'Меню',

@@ -6,36 +6,15 @@ class FoodElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leadingWidth: 80,
-        leading: ElevatedButton.icon(
-          onPressed: () => Navigator.pushNamed(context, '/'),
-          icon: const Icon(Icons.arrow_back_ios),
-          label: const Text(''),
-          style: ElevatedButton.styleFrom(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            foregroundColor: Colors.black,
-          ),
-        ),
-        title: const Text(
-          'Меню',
-          style: TextStyle(
-            color: Colors.black,
-          ),
-        ),
-      ),
-      body: ColoredBox(
-        color: Colors.white,
-        child: ListView.builder(
-          itemCount: 10,
-          scrollDirection: Axis.vertical,
-          itemBuilder: (BuildContext context, int index) {
-            return FoodItem();
-          },
-        ),
+    return ColoredBox(
+      color: Colors.white,
+      child: ListView.builder(
+        itemCount: 10,
+        itemExtent: 450,
+        scrollDirection: Axis.vertical,
+        itemBuilder: (BuildContext context, int index) {
+          return FoodItem();
+        },
       ),
     );
   }
@@ -89,35 +68,42 @@ class FoodItem extends StatelessWidget {
                     ),
                     SizedBox(height: 7),
                     Text(
-                      'Котлета из мраморной говядины, маринованный огурчик, сыр Гауда, помидорб огурец, салат, фирменный тайский соус',
+                      'котлета из мраморной говядины, маринованный огурчик, сыр Гауда, помидор, салат, фирменный соус',
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
                           color: Colors.grey,
                           decoration: TextDecoration.none),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
                     ),
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: Text(
-                    '850 ₸',
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
+              SizedBox(
+                height: 15,
+              ),
+              ElevatedButton(
+                onPressed: () {},
+                child: Text(
+                  '850 ₸',
+                  style: TextStyle(
+                    fontSize: 18,
                   ),
-                  style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      minimumSize: Size(190, 60),
-                      backgroundColor: Color.fromRGBO(66, 67, 64, 1)),
                 ),
+                style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    minimumSize: Size(190, 60),
+                    backgroundColor: Color.fromRGBO(66, 67, 64, 1)),
+                //   ButtonStyle(
+                //   backgroundColor: MaterialStateProperty.all(Colors.grey),
+                //   minimumSize: MaterialStateProperty.all(Size(150, 60)),
+
+                //   // shape: MaterialStateProperty.all(
+
+                //   // CircleBorder(side: BorderSide(width: 10))),
+                // ),
               )
             ],
           ),
