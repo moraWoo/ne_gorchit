@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:ne_gorchit/model/menu.dart';
 import 'package:ne_gorchit/resources/resources.dart';
+import 'package:http/http.dart' as http;
+import 'package:ne_gorchit/services/network_manager.dart';
 
 class FoodElement extends StatelessWidget {
-  const FoodElement({super.key});
+  FoodElement({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,24 +32,37 @@ class FoodElement extends StatelessWidget {
           ),
         ),
       ),
-      body: ColoredBox(
-        color: Colors.white,
-        child: ListView.builder(
-          itemCount: 10,
-          scrollDirection: Axis.vertical,
-          itemBuilder: (BuildContext context, int index) {
-            return FoodItem();
-          },
-        ),
+      body: FutureBuilder<List<Menu>>(
+        future: fetchItems(http.Client()),
+        builder: (context, snapshot) {
+          print('from FutureBuilder: $snapshot.error');
+          if (snapshot.hasError) {
+            return Center(child: Text('An error has occurred!'));
+          } else if (snapshot.hasData) {
+            // return PhotosList(
+            //   items: snapshot.data!,
+            // );
+            return FoodItem(
+              menu: snapshot.data!,
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
       ),
     );
   }
 }
 
 class FoodItem extends StatelessWidget {
-  const FoodItem({
+  FoodItem({
     super.key,
+    required this.menu,
   });
+
+  List<Menu> menu;
 
   @override
   Widget build(BuildContext context) {
@@ -123,6 +141,26 @@ class FoodItem extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class PhotosList extends StatelessWidget {
+  const PhotosList({super.key, required this.items});
+
+  final List<Menu> items;
+  @override
+  Widget build(BuildContext context) {
+    print('$items');
+
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+      ),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        return Text(items[index].data[index].name);
+      },
     );
   }
 }

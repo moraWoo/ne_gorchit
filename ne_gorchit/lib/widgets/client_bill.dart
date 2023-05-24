@@ -56,7 +56,6 @@ class _ClientBillState extends State<ClientBill> {
                 ),
               );
             }
-            ;
           },
         ),
       ),
