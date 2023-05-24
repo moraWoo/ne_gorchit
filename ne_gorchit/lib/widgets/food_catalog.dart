@@ -39,9 +39,6 @@ class FoodElement extends StatelessWidget {
           if (snapshot.hasError) {
             return Center(child: Text('An error has occurred!'));
           } else if (snapshot.hasData) {
-            // return PhotosList(
-            //   items: snapshot.data!,
-            // );
             return FoodItem(
               menu: snapshot.data!,
             );
