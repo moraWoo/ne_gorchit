@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 class mainButton extends StatefulWidget {
@@ -26,12 +25,9 @@ class _mainButtonState extends State<mainButton>
   AnimationStatus _status = AnimationStatus.dismissed;
   AnimationStatus _completed = AnimationStatus.completed;
 
-  late Color _colorButton;
-
   @override
   void initState() {
     super.initState();
-    _colorButton = Color.fromRGBO(66, 67, 64, 1);
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 800));
     _animation = Tween(end: 1.0, begin: 0.0).animate(_controller)
@@ -64,8 +60,6 @@ class _mainButtonState extends State<mainButton>
             if (_status == AnimationStatus.dismissed) {
               _controller.forward();
               print('($_status)');
-
-              _colorButton = Color.fromRGBO(66, 67, 64, 1);
             }
             print('($_status)');
 
@@ -73,13 +67,11 @@ class _mainButtonState extends State<mainButton>
             print('shisha');
             if (_status == AnimationStatus.dismissed) {
               _controller.forward();
-              _colorButton = Color.fromRGBO(66, 67, 64, 1);
             }
           case 4:
             print('bill');
             if (_status == AnimationStatus.dismissed) {
               _controller.forward();
-              _colorButton = Color.fromRGBO(66, 67, 64, 1);
             }
           case 5:
             print('review');

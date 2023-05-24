@@ -26,7 +26,7 @@ class MainApp extends StatelessWidget {
       ),
       routes: {
         '/': (context) => MainMenu(),
-        '/food_catalog': (context) => FoodElement(),
+        '/food_catalog': (context) => FoodMenu(),
         '/client_bill': (context) => ClientBill(),
         // '/mainScreen': (context) => MainScreenWidget(),
         // '/mainScreen/movie_details': (context) {
