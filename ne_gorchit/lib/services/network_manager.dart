@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:ne_gorchit/model/menu.dart';
-
 import 'package:flutter/foundation.dart';
 
 Future<List<Menu>> fetchItems(http.Client client) async {

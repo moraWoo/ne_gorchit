@@ -3,6 +3,7 @@ import 'package:ne_gorchit/model/menu.dart';
 import 'package:ne_gorchit/resources/resources.dart';
 import 'package:http/http.dart' as http;
 import 'package:ne_gorchit/services/network_manager.dart';
+import 'package:ne_gorchit/widgets/basket.dart';
 
 class FoodMenu extends StatelessWidget {
   const FoodMenu({
@@ -62,11 +63,9 @@ class FoodItem extends StatelessWidget {
   });
 
   List<Menu> items;
-
+  var imgUrl = 'http://localhost:4000/';
   @override
   Widget build(BuildContext context) {
-    print('-------');
-    print(items.length);
     return ListView.builder(
       itemCount: items.fold<int>(0, (count, menu) => count + menu.data.length),
       itemBuilder: (context, index) {
@@ -79,8 +78,8 @@ class FoodItem extends StatelessWidget {
           dataIndex -= menu.data.length;
           menuIndex++;
         }
-
         var item = items[menuIndex].data[dataIndex];
+        var resultUrl = imgUrl + item.image;
         return Padding(
           padding: EdgeInsets.all(20.0),
           child: DecoratedBox(
@@ -105,7 +104,9 @@ class FoodItem extends StatelessWidget {
               clipBehavior: Clip.hardEdge,
               child: Column(
                 children: [
-                  Image(image: AssetImage(AppImages.blinchiki)),
+                  Image.network(
+                    resultUrl,
+                  ),
                   Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Column(
@@ -134,30 +135,47 @@ class FoodItem extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      child: Text(
-                        item.price.toString(),
-                        style: TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          minimumSize: Size(190, 60),
-                          backgroundColor: Color.fromRGBO(66, 67, 64, 1)),
-                    ),
-                  )
+                  buttonWithPrice(item: item),
+                  // countButton(),
                 ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class buttonWithPrice extends StatelessWidget {
+  const buttonWithPrice({
+    super.key,
+    required this.item,
+  });
+
+  final Datum item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(15.0),
+      child: ElevatedButton(
+        onPressed: () {
+          countButton();
+        },
+        child: Text(
+          item.price.toString(),
+          style: TextStyle(
+            fontSize: 18,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            minimumSize: Size(190, 60),
+            backgroundColor: Color.fromRGBO(66, 67, 64, 1)),
+      ),
     );
   }
 }

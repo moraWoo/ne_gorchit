@@ -24,12 +24,14 @@ class Menu {
 class Datum {
   String description;
   int id;
+  String image;
   String name;
   double price;
 
   Datum({
     required this.description,
     required this.id,
+    required this.image,
     required this.name,
     required this.price,
   });
@@ -37,6 +39,7 @@ class Datum {
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
         description: json["description"],
         id: json["id"],
+        image: json["image"],
         name: json["name"],
         price: json["price"],
       );
@@ -44,6 +47,7 @@ class Datum {
   Map<String, dynamic> toJson() => {
         "description": description,
         "id": id,
+        "image": image,
         "name": name,
         "price": price,
       };
