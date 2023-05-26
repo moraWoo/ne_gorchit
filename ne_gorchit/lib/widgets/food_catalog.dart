@@ -56,29 +56,47 @@ class FoodMenu extends StatelessWidget {
   }
 }
 
-class FoodItem extends StatelessWidget {
+class FoodItem extends StatefulWidget {
+  int counter = 1;
+
   FoodItem({
     super.key,
     required this.items,
   });
 
   List<Menu> items;
+
+  @override
+  State<FoodItem> createState() => _FoodItemState();
+}
+
+class _FoodItemState extends State<FoodItem> {
   var imgUrl = 'http://localhost:4000/';
+
+  bool _isButtonDisabled = false;
+  int counter = 1;
+  void hideButton() {
+    setState(() {
+      _isButtonDisabled = !_isButtonDisabled;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: items.fold<int>(0, (count, menu) => count + menu.data.length),
+      itemCount:
+          widget.items.fold<int>(0, (count, menu) => count + menu.data.length),
       itemBuilder: (context, index) {
         var menuIndex = 0;
         var dataIndex = index;
-        for (var menu in items) {
+        for (var menu in widget.items) {
           if (dataIndex < menu.data.length) {
             break;
           }
           dataIndex -= menu.data.length;
           menuIndex++;
         }
-        var item = items[menuIndex].data[dataIndex];
+        var item = widget.items[menuIndex].data[dataIndex];
         var resultUrl = imgUrl + item.image;
         return Padding(
           padding: EdgeInsets.all(20.0),
@@ -135,47 +153,97 @@ class FoodItem extends StatelessWidget {
                       ],
                     ),
                   ),
-                  buttonWithPrice(item: item),
-                  // countButton(),
+                  (!_isButtonDisabled)
+                      ? Padding(
+                          padding: EdgeInsets.all(15.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              hideButton();
+                              print(_isButtonDisabled);
+                            },
+                            child: Text(
+                              item.price.toString(),
+                              style: TextStyle(
+                                fontSize: 18,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                minimumSize: Size(190, 60),
+                                backgroundColor: Color.fromRGBO(66, 67, 64, 1)),
+                          ),
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if (widget.counter != 0) {
+                                    setState(() {
+                                      widget.counter == 0
+                                          ? print('counter at 1')
+                                          : widget.counter--;
+                                    });
+                                  } else {}
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    minimumSize: Size(60, 60),
+                                    backgroundColor:
+                                        Color.fromRGBO(66, 67, 64, 1)),
+                                child: Text(
+                                  '-',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Text(
+                              '${widget.counter}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    print('set');
+                                    widget.counter++;
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    minimumSize: Size(60, 60),
+                                    backgroundColor:
+                                        Color.fromRGBO(66, 67, 64, 1)),
+                                child: Text(
+                                  '+',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                 ],
               ),
             ),
           ),
         );
       },
-    );
-  }
-}
-
-class buttonWithPrice extends StatelessWidget {
-  const buttonWithPrice({
-    super.key,
-    required this.item,
-  });
-
-  final Datum item;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(15.0),
-      child: ElevatedButton(
-        onPressed: () {
-          countButton();
-        },
-        child: Text(
-          item.price.toString(),
-          style: TextStyle(
-            fontSize: 18,
-          ),
-        ),
-        style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            minimumSize: Size(190, 60),
-            backgroundColor: Color.fromRGBO(66, 67, 64, 1)),
-      ),
     );
   }
 }

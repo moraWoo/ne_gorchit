@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:ne_gorchit/model/menu.dart';
 
 class countButton extends StatefulWidget {
-  int counter = 0;
+  int counter = 1;
+
+  countButton({
+    super.key,
+    required this.counter,
+  });
 
   @override
   State<countButton> createState() => _countButtonState();
@@ -20,7 +25,7 @@ class _countButtonState extends State<countButton> {
           child: ElevatedButton(
             onPressed: () {
               setState(() {
-                widget.counter == 0 ? print('counter at 0') : widget.counter--;
+                widget.counter == 0 ? print('counter at 1') : widget.counter--;
               });
             },
             style: ElevatedButton.styleFrom(
