@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:ne_gorchit/model/cart.dart';
 import 'package:ne_gorchit/model/menu.dart';
 import 'package:ne_gorchit/resources/resources.dart';
 import 'package:http/http.dart' as http;
 import 'package:ne_gorchit/services/network_manager.dart';
 import 'package:ne_gorchit/widgets/basket.dart';
+import 'package:ne_gorchit/widgets/bottom_bar.dart';
+import 'package:ne_gorchit/widgets/name_description.dart';
 
 class FoodMenu extends StatefulWidget {
   FoodMenu({
@@ -15,6 +18,13 @@ class FoodMenu extends StatefulWidget {
 }
 
 class _FoodMenuState extends State<FoodMenu> {
+  bool _visibleOfBottomBar = false;
+  set visibleOfBottomBar(bool value) => setState(() => {
+        _visibleOfBottomBar = value,
+        print('value: $value'),
+      });
+
+  @override
   int tabIndex = 0;
 
   @override
@@ -50,8 +60,10 @@ class _FoodMenuState extends State<FoodMenu> {
             print('========');
             print(snapshot);
             return FoodItem(
-              items: snapshot.data!,
-            );
+                items: snapshot.data!,
+                callback: (val) => setState(
+                      () => visibleOfBottomBar = val,
+                    ));
           } else {
             return const Center(
               child: CircularProgressIndicator(),
@@ -60,86 +72,23 @@ class _FoodMenuState extends State<FoodMenu> {
         },
       ),
       bottomNavigationBar: Visibility(
-        visible: true,
+        visible: _visibleOfBottomBar,
         child: bottomWidget(),
       ),
     );
   }
 }
 
-class bottomWidget extends StatelessWidget {
-  const bottomWidget({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 120,
-      color: Colors.white,
-      child: InkWell(
-        onTap: () => print('tap on close'),
-        child: Container(
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(20), topLeft: Radius.circular(20)),
-            boxShadow: [
-              BoxShadow(
-                  color: Color.fromRGBO(48, 47, 45, 1),
-                  spreadRadius: 0,
-                  blurRadius: 0.1),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-              child: ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(Colors.yellow),
-                    minimumSize: MaterialStatePropertyAll(
-                      Size(80, 50),
-                    ),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    )),
-                  ),
-                  onPressed: () {},
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '25-35 мин',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      Text(
-                        'Заказ',
-                        style: TextStyle(color: Colors.black, fontSize: 20),
-                      ),
-                      Text(
-                        '3005 ₸',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ],
-                  )),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+typedef void BottomVisibleCallBack(bool val);
 
 class FoodItem extends StatefulWidget {
   int counter = 1;
+  final BottomVisibleCallBack callback;
 
   FoodItem({
     super.key,
     required this.items,
+    required this.callback,
   });
 
   List<Menu> items;
@@ -150,37 +99,18 @@ class FoodItem extends StatefulWidget {
 
 class _FoodItemState extends State<FoodItem> {
   var imgUrl = 'http://localhost:4000/';
-  bool _isButtonDisabled = false;
-  bool onClicked = false;
+  bool _isButtonWithPriceDisabled = false;
   int counter = 1;
+  bool isPressedButton = false;
 
   void hideButton() {
     setState(() {
-      _isButtonDisabled = !_isButtonDisabled;
+      _isButtonWithPriceDisabled = !_isButtonWithPriceDisabled;
     });
   }
 
   @override
-  void initState() {
-    super.initState();
-    onClicked = false;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    bool bottomVisible = true;
-    bool secondOnClicked;
-    if (onClicked) {
-      bottomVisible = true;
-    } else {
-      bottomVisible = false;
-    }
-
     return ListView.builder(
       itemCount:
           widget.items.fold<int>(0, (count, menu) => count + menu.data.length),
@@ -196,6 +126,7 @@ class _FoodItemState extends State<FoodItem> {
         }
         var item = widget.items[menuIndex].data[dataIndex];
         var resultUrl = imgUrl + item.image;
+
         return Padding(
           padding: EdgeInsets.all(20.0),
           child: DecoratedBox(
@@ -223,41 +154,16 @@ class _FoodItemState extends State<FoodItem> {
                   Image.network(
                     resultUrl,
                   ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.name,
-                          style: const TextStyle(
-                            fontSize: 26,
-                            color: Colors.grey,
-                            decoration: TextDecoration.none,
-                          ),
-                          maxLines: 1,
-                        ),
-                        const SizedBox(height: 7),
-                        Text(
-                          item.description,
-                          style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.grey,
-                              decoration: TextDecoration.none),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                  (!_isButtonDisabled)
+                  nameAndDescriptionFoodItem(item: item),
+                  (!_isButtonWithPriceDisabled)
                       ? Padding(
-                          padding: EdgeInsets.all(15.0),
+                          padding: const EdgeInsets.all(15.0),
                           child: ElevatedButton(
                             onPressed: () {
                               hideButton();
-                              print(_isButtonDisabled);
+                              print(
+                                  '_isButtonWithPriceDisabled: $_isButtonWithPriceDisabled');
+                              widget.callback(_isButtonWithPriceDisabled);
                             },
                             child: Text(
                               item.price.toString(),
@@ -282,6 +188,10 @@ class _FoodItemState extends State<FoodItem> {
                                 onPressed: () {
                                   if (widget.counter == 1) {
                                     hideButton();
+                                    print(
+                                      '_isButtonWithPriceDisabled: $_isButtonWithPriceDisabled',
+                                    );
+                                    widget.callback(_isButtonWithPriceDisabled);
                                   } else {
                                     setState(() {
                                       widget.counter--;
