@@ -100,13 +100,25 @@ class FoodItem extends StatefulWidget {
 class _FoodItemState extends State<FoodItem> {
   var imgUrl = 'http://localhost:4000/';
   bool _isButtonWithPriceDisabled = false;
-  int counter = 1;
   bool isPressedButton = false;
+  List<int> counters = [];
+  List<bool> _isButtonWithPriceDisabledList = [];
 
-  void hideButton() {
+  void hideButton(int index) {
     setState(() {
-      _isButtonWithPriceDisabled = !_isButtonWithPriceDisabled;
+      _isButtonWithPriceDisabledList[index] =
+          !_isButtonWithPriceDisabledList[index];
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Инициализируем счетчики и флаги для каждого элемента
+    counters = List<int>.filled(widget.items.length, 1);
+    _isButtonWithPriceDisabledList =
+        List<bool>.filled(widget.items.length, false);
+    print('counters: $counters');
   }
 
   @override
@@ -160,10 +172,15 @@ class _FoodItemState extends State<FoodItem> {
                           padding: const EdgeInsets.all(15.0),
                           child: ElevatedButton(
                             onPressed: () {
-                              hideButton();
+                              //=============================================================
+                              hideButton(index);
+                              print('index: $index');
                               print(
                                   '_isButtonWithPriceDisabled: $_isButtonWithPriceDisabled');
-                              widget.callback(_isButtonWithPriceDisabled);
+                              widget.callback(
+                                  _isButtonWithPriceDisabledList[index]);
+                              print(
+                                  '_isButtonWithPriceDisabledList: $_isButtonWithPriceDisabledList');
                             },
                             child: Text(
                               item.price.toString(),
@@ -187,14 +204,17 @@ class _FoodItemState extends State<FoodItem> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   if (widget.counter == 1) {
-                                    hideButton();
+                                    hideButton(index);
+                                    print('index: $index');
                                     print(
-                                      '_isButtonWithPriceDisabled: $_isButtonWithPriceDisabled',
-                                    );
-                                    widget.callback(_isButtonWithPriceDisabled);
+                                        '_isButtonWithPriceDisabled: $_isButtonWithPriceDisabled');
+                                    widget.callback(
+                                        _isButtonWithPriceDisabledList[index]);
                                   } else {
                                     setState(() {
-                                      widget.counter--;
+                                      counters[
+                                          index]--; // Уменьшаем счетчик для текущего элемента
+                                      print('index: $index');
                                     });
                                   }
                                 },
@@ -214,7 +234,7 @@ class _FoodItemState extends State<FoodItem> {
                               ),
                             ),
                             Text(
-                              '${widget.counter}',
+                              '${counters[index]}',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
@@ -226,7 +246,7 @@ class _FoodItemState extends State<FoodItem> {
                                 onPressed: () {
                                   setState(() {
                                     print('set');
-                                    widget.counter++;
+                                    counters[index]++;
                                   });
                                 },
                                 style: ElevatedButton.styleFrom(
