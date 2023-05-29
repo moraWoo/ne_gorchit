@@ -17,10 +17,20 @@ class FoodMenu extends StatefulWidget {
   State<FoodMenu> createState() => _FoodMenuState();
 }
 
+class SetValues {
+  final bool value;
+  final int count;
+
+  SetValues(this.value, this.count);
+}
+
 class _FoodMenuState extends State<FoodMenu> {
   bool _visibleOfBottomBar = false;
-  set visibleOfBottomBar(bool value) => setState(() => {
-        _visibleOfBottomBar = value,
+  int _count = 0;
+
+  set visibleOfBottomBar(SetValues values) => setState(() {
+        _visibleOfBottomBar = values.value;
+        _count = values.count;
       });
 
   @override
@@ -57,8 +67,8 @@ class _FoodMenuState extends State<FoodMenu> {
           } else if (snapshot.hasData) {
             return FoodItem(
                 items: snapshot.data!,
-                callback: (val) => setState(
-                      () => _visibleOfBottomBar = val,
+                callback: (val, count) => setState(
+                      () => {_visibleOfBottomBar = val, _count = count},
                     ));
           } else {
             return const Center(
@@ -69,13 +79,13 @@ class _FoodMenuState extends State<FoodMenu> {
       ),
       bottomNavigationBar: Visibility(
         visible: _visibleOfBottomBar,
-        child: bottomWidget(),
+        child: bottomWidget(count: _count),
       ),
     );
   }
 }
 
-typedef void BottomVisibleCallBack(bool val);
+typedef void BottomVisibleCallBack(bool val, int count);
 
 class FoodItem extends StatefulWidget {
   final BottomVisibleCallBack callback;
@@ -98,6 +108,8 @@ class _FoodItemState extends State<FoodItem> {
   bool isPressedButton = false;
   List<int> counters = [];
   List<bool> _isButtonWithPriceDisabledList = [];
+  int sumOfElements = 0;
+  int _count = 0;
 
   @override
   void initState() {
@@ -106,8 +118,6 @@ class _FoodItemState extends State<FoodItem> {
     counters = List<int>.filled(widget.items[0].data.length, 1);
     _isButtonWithPriceDisabledList =
         List<bool>.filled(widget.items[0].data.length, false);
-    print(counters);
-    print(_isButtonWithPriceDisabledList);
   }
 
   void hideButton(int index) {
@@ -169,14 +179,14 @@ class _FoodItemState extends State<FoodItem> {
                           child: ElevatedButton(
                             onPressed: () {
                               //=============================================================
-                              // hideButton(index);
-                              print(counters);
-                              print(_isButtonWithPriceDisabledList);
-
                               widget.callback(
                                 _isButtonWithPriceDisabledList[index] =
                                     !_isButtonWithPriceDisabledList[index],
+                                _count = sumOfElements,
                               );
+                              sumOfElements = counters
+                                  .reduce((value, element) => value + element);
+                              print(sumOfElements);
                             },
                             child: Text(
                               item.price.toString(),
@@ -199,17 +209,29 @@ class _FoodItemState extends State<FoodItem> {
                               padding: const EdgeInsets.all(15.0),
                               child: ElevatedButton(
                                 onPressed: () {
-                                  if (widget.items[0].data.length == 1) {
-                                    // hideButton(index);
-
+                                  if (counters[index] == 1) {
+                                    print(counters);
                                     widget.callback(
-                                        _isButtonWithPriceDisabledList[index] =
-                                            !_isButtonWithPriceDisabledList[
-                                                index]);
+                                      _isButtonWithPriceDisabledList[index] =
+                                          !_isButtonWithPriceDisabledList[
+                                              index],
+                                      _count = sumOfElements,
+                                    );
+                                    sumOfElements = counters.reduce(
+                                        (value, element) => value + element);
+                                    print('1sumOfElements: $sumOfElements');
                                   } else {
                                     setState(() {
-                                      counters[
-                                          index]--; // Уменьшаем счетчик для текущего элемента
+                                      counters[index]--;
+                                      widget.callback(
+                                        _isButtonWithPriceDisabledList[index] =
+                                            _isButtonWithPriceDisabledList[
+                                                index],
+                                        _count = sumOfElements,
+                                      );
+                                      sumOfElements = counters.reduce(
+                                          (value, element) => value + element);
+                                      print('--sumOfElements: $sumOfElements');
                                     });
                                   }
                                 },
@@ -235,13 +257,28 @@ class _FoodItemState extends State<FoodItem> {
                                 fontSize: 20,
                               ),
                             ),
+                            Text(
+                              '${item.price * counters[index]}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
                             Padding(
                               padding: const EdgeInsets.all(15.0),
                               child: ElevatedButton(
                                 onPressed: () {
                                   setState(() {
                                     counters[index]++;
+                                    widget.callback(
+                                      _isButtonWithPriceDisabledList[index] =
+                                          _isButtonWithPriceDisabledList[index],
+                                      _count = sumOfElements,
+                                    );
                                   });
+                                  sumOfElements = counters.reduce(
+                                      (value, element) => value + element);
+                                  print('++sumOfElements: $sumOfElements');
                                 },
                                 style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(

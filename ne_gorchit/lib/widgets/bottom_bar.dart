@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 
-class bottomWidget extends StatelessWidget {
+class bottomWidget extends StatefulWidget {
+  final int count;
+
   const bottomWidget({
     super.key,
+    required this.count,
   });
 
+  @override
+  State<bottomWidget> createState() => _bottomWidgetState();
+}
+
+class _bottomWidgetState extends State<bottomWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -51,6 +59,10 @@ class bottomWidget extends StatelessWidget {
                       ),
                       Text(
                         'Заказ',
+                        style: TextStyle(color: Colors.black, fontSize: 20),
+                      ),
+                      Text(
+                        widget.count.toString(),
                         style: TextStyle(color: Colors.black, fontSize: 20),
                       ),
                       Text(
