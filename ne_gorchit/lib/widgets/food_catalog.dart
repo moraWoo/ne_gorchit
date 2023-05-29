@@ -21,7 +21,6 @@ class _FoodMenuState extends State<FoodMenu> {
   bool _visibleOfBottomBar = false;
   set visibleOfBottomBar(bool value) => setState(() => {
         _visibleOfBottomBar = value,
-        print('value: $value'),
       });
 
   @override
@@ -53,16 +52,13 @@ class _FoodMenuState extends State<FoodMenu> {
       body: FutureBuilder<List<Menu>>(
         future: fetchItems(http.Client()),
         builder: (context, snapshot) {
-          print('from FutureBuilder: $snapshot.error');
           if (snapshot.hasError) {
             return const Center(child: Text('An error has occurred!'));
           } else if (snapshot.hasData) {
-            print('========');
-            print(snapshot);
             return FoodItem(
                 items: snapshot.data!,
                 callback: (val) => setState(
-                      () => visibleOfBottomBar = val,
+                      () => _visibleOfBottomBar = val,
                     ));
           } else {
             return const Center(
@@ -82,7 +78,6 @@ class _FoodMenuState extends State<FoodMenu> {
 typedef void BottomVisibleCallBack(bool val);
 
 class FoodItem extends StatefulWidget {
-  int counter = 1;
   final BottomVisibleCallBack callback;
 
   FoodItem({
@@ -104,21 +99,22 @@ class _FoodItemState extends State<FoodItem> {
   List<int> counters = [];
   List<bool> _isButtonWithPriceDisabledList = [];
 
+  @override
+  void initState() {
+    super.initState();
+    // Инициализируем счетчики и флаги для каждого элемента
+    counters = List<int>.filled(widget.items[0].data.length, 1);
+    _isButtonWithPriceDisabledList =
+        List<bool>.filled(widget.items[0].data.length, false);
+    print(counters);
+    print(_isButtonWithPriceDisabledList);
+  }
+
   void hideButton(int index) {
     setState(() {
       _isButtonWithPriceDisabledList[index] =
           !_isButtonWithPriceDisabledList[index];
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // Инициализируем счетчики и флаги для каждого элемента
-    counters = List<int>.filled(widget.items.length, 1);
-    _isButtonWithPriceDisabledList =
-        List<bool>.filled(widget.items.length, false);
-    print('counters: $counters');
   }
 
   @override
@@ -138,7 +134,7 @@ class _FoodItemState extends State<FoodItem> {
         }
         var item = widget.items[menuIndex].data[dataIndex];
         var resultUrl = imgUrl + item.image;
-
+        print(widget.items);
         return Padding(
           padding: EdgeInsets.all(20.0),
           child: DecoratedBox(
@@ -167,20 +163,20 @@ class _FoodItemState extends State<FoodItem> {
                     resultUrl,
                   ),
                   nameAndDescriptionFoodItem(item: item),
-                  (!_isButtonWithPriceDisabled)
+                  (!_isButtonWithPriceDisabledList[index])
                       ? Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: ElevatedButton(
                             onPressed: () {
                               //=============================================================
-                              hideButton(index);
-                              print('index: $index');
-                              print(
-                                  '_isButtonWithPriceDisabled: $_isButtonWithPriceDisabled');
+                              // hideButton(index);
+                              print(counters);
+                              print(_isButtonWithPriceDisabledList);
+
                               widget.callback(
-                                  _isButtonWithPriceDisabledList[index]);
-                              print(
-                                  '_isButtonWithPriceDisabledList: $_isButtonWithPriceDisabledList');
+                                _isButtonWithPriceDisabledList[index] =
+                                    !_isButtonWithPriceDisabledList[index],
+                              );
                             },
                             child: Text(
                               item.price.toString(),
@@ -203,18 +199,17 @@ class _FoodItemState extends State<FoodItem> {
                               padding: const EdgeInsets.all(15.0),
                               child: ElevatedButton(
                                 onPressed: () {
-                                  if (widget.counter == 1) {
-                                    hideButton(index);
-                                    print('index: $index');
-                                    print(
-                                        '_isButtonWithPriceDisabled: $_isButtonWithPriceDisabled');
+                                  if (widget.items[0].data.length == 1) {
+                                    // hideButton(index);
+
                                     widget.callback(
-                                        _isButtonWithPriceDisabledList[index]);
+                                        _isButtonWithPriceDisabledList[index] =
+                                            !_isButtonWithPriceDisabledList[
+                                                index]);
                                   } else {
                                     setState(() {
                                       counters[
                                           index]--; // Уменьшаем счетчик для текущего элемента
-                                      print('index: $index');
                                     });
                                   }
                                 },
@@ -245,7 +240,6 @@ class _FoodItemState extends State<FoodItem> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   setState(() {
-                                    print('set');
                                     counters[index]++;
                                   });
                                 },
