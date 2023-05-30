@@ -115,9 +115,10 @@ class _FoodItemState extends State<FoodItem> {
   void initState() {
     super.initState();
     // Инициализируем счетчики и флаги для каждого элемента
-    counters = List<int>.filled(widget.items[0].data.length, 1);
+    counters = List<int>.filled(widget.items[0].data.length, 0);
     _isButtonWithPriceDisabledList =
         List<bool>.filled(widget.items[0].data.length, false);
+    print(counters);
   }
 
   void hideButton(int index) {
@@ -129,6 +130,7 @@ class _FoodItemState extends State<FoodItem> {
 
   @override
   Widget build(BuildContext context) {
+    print(counters);
     return ListView.builder(
       itemCount:
           widget.items.fold<int>(0, (count, menu) => count + menu.data.length),
@@ -179,14 +181,18 @@ class _FoodItemState extends State<FoodItem> {
                           child: ElevatedButton(
                             onPressed: () {
                               //=============================================================
+                              print('first press');
+                              if (counters[index] == 0) {
+                                counters[index]++;
+                              }
+                              sumOfElements = counters
+                                  .reduce((value, element) => value + element);
                               widget.callback(
                                 _isButtonWithPriceDisabledList[index] =
                                     !_isButtonWithPriceDisabledList[index],
                                 _count = sumOfElements,
                               );
-                              sumOfElements = counters
-                                  .reduce((value, element) => value + element);
-                              print(sumOfElements);
+                              print('tap on change button');
                             },
                             child: Text(
                               item.price.toString(),
@@ -209,30 +215,58 @@ class _FoodItemState extends State<FoodItem> {
                               padding: const EdgeInsets.all(15.0),
                               child: ElevatedButton(
                                 onPressed: () {
-                                  if (counters[index] == 1) {
-                                    print(counters);
-                                    widget.callback(
-                                      _isButtonWithPriceDisabledList[index] =
-                                          !_isButtonWithPriceDisabledList[
-                                              index],
-                                      _count = sumOfElements,
-                                    );
+                                  sumOfElements = counters.reduce(
+                                      (value, element) => value + element);
+                                  if (counters[index] == 0) {
+                                    print('if sumOfElements == 0');
+
                                     sumOfElements = counters.reduce(
                                         (value, element) => value + element);
-                                    print('1sumOfElements: $sumOfElements');
-                                  } else {
-                                    setState(() {
-                                      counters[index]--;
+                                    print(sumOfElements);
+
+                                    if (sumOfElements > 0) {
+                                      setState(() {
+                                        _isButtonWithPriceDisabledList[index] =
+                                            !_isButtonWithPriceDisabledList[
+                                                index];
+                                      });
+                                    } else {
                                       widget.callback(
                                         _isButtonWithPriceDisabledList[index] =
-                                            _isButtonWithPriceDisabledList[
+                                            !_isButtonWithPriceDisabledList[
                                                 index],
                                         _count = sumOfElements,
                                       );
+                                    }
+                                  } else {
+                                    print('if sumOfElements != 0 else');
+                                    sumOfElements = counters.reduce(
+                                        (value, element) => value + element);
+                                    print(sumOfElements);
+                                    if (counters[index] > 0) {
+                                      print('if sumOfElements != 0 else if');
+                                      print(sumOfElements);
+                                      counters[index]--;
                                       sumOfElements = counters.reduce(
                                           (value, element) => value + element);
-                                      print('--sumOfElements: $sumOfElements');
-                                    });
+                                      setState(() {
+                                        widget.callback(
+                                          _isButtonWithPriceDisabledList[
+                                                  index] =
+                                              _isButtonWithPriceDisabledList[
+                                                  index],
+                                          _count = sumOfElements,
+                                        );
+                                      });
+                                    } else {
+                                      print('if sumOfElements != 0 else2 ');
+
+                                      sumOfElements = counters.reduce(
+                                          (value, element) => value + element);
+                                      setState(() {
+                                        counters[index]--;
+                                      });
+                                    }
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -270,14 +304,14 @@ class _FoodItemState extends State<FoodItem> {
                                 onPressed: () {
                                   setState(() {
                                     counters[index]++;
+                                    sumOfElements = counters.reduce(
+                                        (value, element) => value + element);
                                     widget.callback(
                                       _isButtonWithPriceDisabledList[index] =
                                           _isButtonWithPriceDisabledList[index],
                                       _count = sumOfElements,
                                     );
                                   });
-                                  sumOfElements = counters.reduce(
-                                      (value, element) => value + element);
                                   print('++sumOfElements: $sumOfElements');
                                 },
                                 style: ElevatedButton.styleFrom(
