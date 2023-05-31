@@ -49,7 +49,9 @@ class _bottomWidgetState extends State<bottomWidget> {
                       borderRadius: BorderRadius.circular(20.0),
                     )),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.popAndPushNamed(context, '/cart');
+                  },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

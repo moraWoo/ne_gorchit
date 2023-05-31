@@ -4,7 +4,7 @@ import 'package:ne_gorchit/model/menu.dart';
 import 'package:ne_gorchit/resources/resources.dart';
 import 'package:http/http.dart' as http;
 import 'package:ne_gorchit/services/network_manager.dart';
-import 'package:ne_gorchit/widgets/basket.dart';
+import 'package:ne_gorchit/widgets/cart.dart';
 import 'package:ne_gorchit/widgets/bottom_bar.dart';
 import 'package:ne_gorchit/widgets/name_description.dart';
 
@@ -120,12 +120,12 @@ class _FoodItemState extends State<FoodItem> {
         List<bool>.filled(widget.items[0].data.length, false);
   }
 
-  void hideButton(int index) {
-    setState(() {
-      _isButtonWithPriceDisabledList[index] =
-          !_isButtonWithPriceDisabledList[index];
-    });
-  }
+  // void hideButton(int index) {
+  //   setState(() {
+  //     _isButtonWithPriceDisabledList[index] =
+  //         !_isButtonWithPriceDisabledList[index];
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
