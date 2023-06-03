@@ -29,7 +29,7 @@ class MainApp extends StatelessWidget {
         '/': (context) => MainMenu(),
         '/food_catalog': (context) => FoodMenu(),
         '/client_bill': (context) => ClientBill(),
-        '/cart': (context) => Cart(),
+        '/cart': (context) => CartPage(),
       },
       // initialRoute: '/main_menu',
       initialRoute: '/',

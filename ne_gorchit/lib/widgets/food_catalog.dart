@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ne_gorchit/controller/cart_controller.dart';
 import 'package:ne_gorchit/model/cart.dart';
 import 'package:ne_gorchit/model/menu.dart';
 import 'package:ne_gorchit/resources/resources.dart';
@@ -27,6 +29,7 @@ class SetValues {
 class _FoodMenuState extends State<FoodMenu> {
   bool _visibleOfBottomBar = false;
   int _count = 0;
+  final HomePageController controller = Get.put(HomePageController());
 
   set visibleOfBottomBar(SetValues values) => setState(() {
         _visibleOfBottomBar = values.value;
@@ -65,6 +68,10 @@ class _FoodMenuState extends State<FoodMenu> {
           if (snapshot.hasError) {
             return const Center(child: Text('An error has occurred!'));
           } else if (snapshot.hasData) {
+            Get.put(HomePageController());
+            print('+++');
+
+            print(controller.cartItems);
             return FoodItem(
                 items: snapshot.data!,
                 callback: (val, count) => setState(
@@ -119,13 +126,6 @@ class _FoodItemState extends State<FoodItem> {
     _isButtonWithPriceDisabledList =
         List<bool>.filled(widget.items[0].data.length, false);
   }
-
-  // void hideButton(int index) {
-  //   setState(() {
-  //     _isButtonWithPriceDisabledList[index] =
-  //         !_isButtonWithPriceDisabledList[index];
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {

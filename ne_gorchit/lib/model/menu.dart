@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 import 'dart:convert';
+import 'package:ne_gorchit/services/item_service.dart';
 
 Menu menuFromJson(String str) => Menu.fromJson(json.decode(str));
 
@@ -27,6 +28,9 @@ class Datum {
   String image;
   String name;
   double price;
+  int idTable;
+  bool fav;
+  double rating;
 
   Datum({
     required this.description,
@@ -34,6 +38,9 @@ class Datum {
     required this.image,
     required this.name,
     required this.price,
+    required this.idTable,
+    required this.fav,
+    required this.rating,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -42,7 +49,12 @@ class Datum {
         image: json["image"],
         name: json["name"],
         price: json["price"],
+        idTable: json["idTable"],
+        fav: json["fav"],
+        rating: json["rating"],
       );
+
+  get length => null;
 
   Map<String, dynamic> toJson() => {
         "description": description,
@@ -50,5 +62,8 @@ class Datum {
         "image": image,
         "name": name,
         "price": price,
+        "idTable": idTable,
+        "fav": fav,
+        "rating": rating,
       };
 }
