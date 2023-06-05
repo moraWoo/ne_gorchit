@@ -64,15 +64,15 @@ class SQLService {
   Future saveRecord(Menu menu) async {
     await this.db?.transaction((txn) async {
       var qry =
-          'INSERT INTO shopping(name, price, image,rating,fav) VALUES("${menu.data[0].name}",${menu.data[0].price}, "${menu.data[0].image}",${menu.data[0].rating},${menu.data[0].fav ? 1 : 0})';
+          'INSERT INTO shopping(name, price, image,rating,fav) VALUES("${menu.data[0].name}",${menu.data[0].price}, "${menu.data[0].image}",${menu.data[0].rating},${menu.data[0].fav})';
       int id1 = await txn.rawInsert(qry);
       return id1;
     });
   }
 
-  Future setItemAsFavourite(int id, bool flag) async {
+  Future setItemAsFavourite(int id, int flag) async {
     var query = "UPDATE shopping set fav = ? WHERE id = ?";
-    return await this.db?.rawUpdate(query, [flag ? 1 : 0, id]);
+    return await this.db?.rawUpdate(query, [flag, id]);
   }
 
   Future getItemsRecord() async {
@@ -96,7 +96,7 @@ class SQLService {
   Future addToCart(Menu menu) async {
     await this.db?.transaction((txn) async {
       var qry =
-          'INSERT INTO cart_list(shop_id, name, price, image,rating,fav) VALUES(${menu.data[0].id}, "${menu.data[0].name}",${menu.data[0].price}, "${menu.data[0].image}",${menu.data[0].rating},${menu.data[0].fav ? 1 : 0})';
+          'INSERT INTO cart_list(shop_id, name, price, image,rating,fav) VALUES(${menu.data[0].id}, "${menu.data[0].name}",${menu.data[0].price}, "${menu.data[0].image}",${menu.data[0].rating},${menu.data[0].fav})';
       int id1 = await txn.rawInsert(qry);
       return id1;
     });

@@ -29,7 +29,7 @@ class Datum {
   String name;
   double price;
   int idTable;
-  bool fav;
+  int fav;
   double rating;
 
   Datum({

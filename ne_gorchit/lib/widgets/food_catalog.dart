@@ -29,7 +29,7 @@ class SetValues {
 class _FoodMenuState extends State<FoodMenu> {
   bool _visibleOfBottomBar = false;
   int _count = 0;
-  final HomePageController controller = Get.put(HomePageController());
+  // final HomePageController controller = Get.put(HomePageController());
 
   set visibleOfBottomBar(SetValues values) => setState(() {
         _visibleOfBottomBar = values.value;
@@ -66,12 +66,15 @@ class _FoodMenuState extends State<FoodMenu> {
         future: fetchItems(http.Client()),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
+            print(context);
+            print(snapshot);
+
             return const Center(child: Text('An error has occurred!'));
           } else if (snapshot.hasData) {
-            Get.put(HomePageController());
+            // Get.put(HomePageController());
             print('+++');
 
-            print(controller.cartItems);
+            // print(controller.cartItems);
             return FoodItem(
                 items: snapshot.data!,
                 callback: (val, count) => setState(

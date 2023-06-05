@@ -75,7 +75,7 @@ class HomePageController extends GetxController {
     }
   }
 
-  setToFav(int id, bool flag) async {
+  setToFav(int id, int flag) async {
     int index = items.indexWhere((element) => element.data[0].id == id);
 
     items[index].data[0].fav = flag;

@@ -8,6 +8,7 @@ Future<List<Menu>> fetchItems(http.Client client) async {
   final response =
       await client.get(Uri.parse('http://localhost:4000/api/items'));
   // Use the compute function to run parsePhotos in a separate isolate.
+  print(response.body);
   return compute(parseItems, response.body);
 }
 
