@@ -1,7 +1,6 @@
 import 'package:ne_gorchit/model/menu.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:ne_gorchit/model/item_model.dart';
 
 class SQLService {
   Database? db;
@@ -10,7 +9,7 @@ class SQLService {
     try {
       // Get a location using getDatabasesPath
       var databasesPath = await getDatabasesPath();
-      String path = join(databasesPath, 'shopping.db');
+      String path = join(databasesPath, 'shopping_new.db');
 
       // open the database
       db = await openDatabase(
@@ -44,7 +43,6 @@ class SQLService {
       await db?.execute(qry);
       qry = "CREATE TABLE IF NOT EXISTS cart_list ( "
           "id INTEGER PRIMARY KEY,"
-          "shop_id INTEGER,"
           "name TEXT,"
           "image Text,"
           "price REAL,"
@@ -63,10 +61,12 @@ class SQLService {
 
   Future saveRecord(Menu menu) async {
     await this.db?.transaction((txn) async {
-      var qry =
-          'INSERT INTO shopping(name, price, image,rating,fav) VALUES("${menu.data[0].name}",${menu.data[0].price}, "${menu.data[0].image}",${menu.data[0].rating},${menu.data[0].fav})';
-      int id1 = await txn.rawInsert(qry);
-      return id1;
+      for (var datum in menu.data) {
+        var qry =
+            'INSERT INTO shopping(name, image, price, fav, rating, description, idTable) VALUES("${datum.name}", "${datum.image}", ${datum.price}, ${datum.fav}, ${datum.rating}, "${datum.description}", ${datum.idTable})';
+        int id1 = await txn.rawInsert(qry);
+        return id1;
+      }
     });
   }
 
@@ -95,10 +95,13 @@ class SQLService {
 
   Future addToCart(Menu menu) async {
     await this.db?.transaction((txn) async {
-      var qry =
-          'INSERT INTO cart_list(shop_id, name, price, image,rating,fav) VALUES(${menu.data[0].id}, "${menu.data[0].name}",${menu.data[0].price}, "${menu.data[0].image}",${menu.data[0].rating},${menu.data[0].fav})';
-      int id1 = await txn.rawInsert(qry);
-      return id1;
+      for (var datum in menu.data) {
+        var qry =
+            'INSERT INTO cart_list(name, image, price, fav, rating, description, idTable) VALUES("${datum.name}", "${datum.image}", ${datum.price}, ${datum.fav}, ${datum.rating}, "${datum.description}", ${datum.idTable})';
+        print('qry: $qry');
+        int id1 = await txn.rawInsert(qry);
+        return id1;
+      }
     });
   }
 

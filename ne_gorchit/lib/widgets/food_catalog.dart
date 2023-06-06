@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ne_gorchit/controller/cart_controller.dart';
-import 'package:ne_gorchit/model/cart.dart';
 import 'package:ne_gorchit/model/menu.dart';
-import 'package:ne_gorchit/resources/resources.dart';
 import 'package:http/http.dart' as http;
 import 'package:ne_gorchit/services/network_manager.dart';
-import 'package:ne_gorchit/widgets/cart.dart';
 import 'package:ne_gorchit/widgets/bottom_bar.dart';
 import 'package:ne_gorchit/widgets/name_description.dart';
 
@@ -29,7 +26,7 @@ class SetValues {
 class _FoodMenuState extends State<FoodMenu> {
   bool _visibleOfBottomBar = false;
   int _count = 0;
-  // final HomePageController controller = Get.put(HomePageController());
+  final HomePageController controller = Get.put(HomePageController());
 
   set visibleOfBottomBar(SetValues values) => setState(() {
         _visibleOfBottomBar = values.value;
@@ -71,10 +68,10 @@ class _FoodMenuState extends State<FoodMenu> {
 
             return const Center(child: Text('An error has occurred!'));
           } else if (snapshot.hasData) {
-            // Get.put(HomePageController());
+            Get.put(HomePageController());
             print('+++');
 
-            // print(controller.cartItems);
+            print(controller.cartItems);
             return FoodItem(
                 items: snapshot.data!,
                 callback: (val, count) => setState(

@@ -1,27 +1,12 @@
-import 'package:ne_gorchit/model/menu.dart';
 import 'package:ne_gorchit/services/item_service.dart';
+import 'package:ne_gorchit/model/menu.dart';
+
 import 'package:get/get.dart';
 
 class HomePageController extends GetxController {
   ItemServices itemServices = ItemServices();
-  List<Menu> shoppingList = [];
+  List<Menu> items = [];
   List<Menu> cartItems = [];
-
-  List<Menu> getShoppingItems(Menu menu) {
-    int count = 1;
-    for (var element in menu.data[0].length) {
-      element.id = count;
-      shoppingList.add(element);
-      count++;
-      print(element);
-    }
-    print('=====1');
-    print(shoppingList);
-    return shoppingList;
-  }
-
-  List<Menu> get items => shoppingList;
-
   bool isLoading = true;
 
   @override
@@ -33,16 +18,31 @@ class HomePageController extends GetxController {
 
   loadDB() async {
     await itemServices.openDB();
+    print('loadDB');
     loadItems();
     getCardList();
   }
 
-  getItem(int id) {
-    return items.singleWhere((element) => element.data[0].id == id);
+  Menu? getItem(int id) {
+    for (var menu in items) {
+      for (var datum in menu.data) {
+        if (datum.id == id) {
+          return menu;
+        }
+      }
+    }
+    return null; // Если элемент с заданным id не найден
   }
 
-  bool isAlreadyInCart(id) {
-    return cartItems.indexWhere((element) => element.data[0].id == id) > -1;
+  bool isAlreadyInCart(int id) {
+    for (var menu in cartItems) {
+      for (var datum in menu.data) {
+        if (datum.idTable == id) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   getCardList() async {
@@ -50,7 +50,8 @@ class HomePageController extends GetxController {
       List list = await itemServices.getCartList();
       cartItems.clear();
       list.forEach((element) {
-        cartItems.add(element);
+        Menu menu = Menu.fromJson(element);
+        cartItems.addAll(menu.data as Iterable<Menu>);
       });
       update();
     } catch (e) {
@@ -62,10 +63,15 @@ class HomePageController extends GetxController {
     try {
       isLoading = true;
       update();
+      print('loadItems');
 
       List list = await itemServices.loadItems();
+      print('list: $list');
+
+      items.clear();
       list.forEach((element) {
-        items.add(element);
+        Menu menu = Menu.fromJson(element);
+        items.add(menu);
       });
 
       isLoading = false;
@@ -76,14 +82,19 @@ class HomePageController extends GetxController {
   }
 
   setToFav(int id, int flag) async {
-    int index = items.indexWhere((element) => element.data[0].id == id);
-
-    items[index].data[0].fav = flag;
-    update();
-    try {
-      await itemServices.setItemAsFavourite(id, flag);
-    } catch (e) {
-      print(e);
+    for (var menu in items) {
+      for (var datum in menu.data) {
+        if (datum.id == id) {
+          datum.fav = flag;
+          update();
+          try {
+            await itemServices.setItemAsFavourite(id, flag);
+          } catch (e) {
+            print(e);
+          }
+          return;
+        }
+      }
     }
   }
 
@@ -98,9 +109,18 @@ class HomePageController extends GetxController {
 
   removeFromCart(int idTable) async {
     itemServices.removeFromCart(idTable);
-    int index =
-        cartItems.indexWhere((element) => element.data[0].idTable == idTable);
-    cartItems.removeAt(index);
+    for (var menu in cartItems) {
+      int index = menu.data.indexWhere((element) => element.idTable == idTable);
+      if (index > -1) {
+        menu.data.removeAt(index);
+        break;
+      }
+    }
     update();
   }
+}
+
+void main() {
+  ItemServices itemServices = ItemServices();
+  itemServices.main(); // Вызов main() для заполнения списка items
 }

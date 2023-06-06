@@ -1,72 +1,50 @@
-import 'package:ne_gorchit/model/item_model.dart';
 import 'package:ne_gorchit/model/menu.dart';
 import 'package:ne_gorchit/services/sql_service.dart';
 import 'package:ne_gorchit/services/storage_service.dart';
+import 'package:ne_gorchit/model/menu.dart';
 
 class ItemServices {
   SQLService sqlService = SQLService();
   StorageService storageService = StorageService();
   List<Menu> shoppingList = [];
-  // List<Menu> get items => getShoppingItems(Menu);
 
-  List<Menu> getShoppingItems(Menu menu) {
+  List<Menu> getShoppingItems() {
     int count = 1;
-    for (var element in menu.data[0].length) {
-      element.id = count;
-      shoppingList.add(element);
-      count++;
+    for (int i = 0; i < shoppingList.length; i++) {
+      shoppingList[i].data.forEach((element) {
+        element.id = count;
+        count++;
+      });
     }
-    print('====2=');
-    print(menu);
-    print(menu.data[0].length);
-
-    print(shoppingList);
     return shoppingList;
   }
 
-  // List<Menu> getShoppingItems(Menu menu) {
-  //   int count = 1;
-  //   Datum element = menu.data[0];
-  //   element.id = count;
-  //   Menu menuObject = Menu(data: [element]);
-  //   shoppingList.add(menuObject);
-  //   count++;
+  List<Menu> items = [];
 
-  //   print('=====');
-  //   print(menu);
-  //   print(shoppingList);
-
-  //   return shoppingList;
-  // }
-
-  List<Menu> get items => shoppingList;
+  void main() {
+    items = getShoppingItems();
+    // Дополнительный код, использующий переменную items
+  }
 
   Future openDB() async {
-    print('openDB');
     return await sqlService.openDB();
   }
 
   loadItems() async {
     bool isFirst = await isFirstTime();
-    print('loadItems');
 
     if (isFirst) {
       // Load From local DB
       List items = await getLocalDBRecord();
-      print(items);
       return items;
     } else {
       // Save Record into DB & load record
       List items = await saveToLocalDB();
-      print(items);
-
       return items;
     }
   }
 
   Future<bool> isFirstTime() async {
-    print('isFirstTime');
-
     return await storageService.getItem("isFirstTime") == 'true';
   }
 
@@ -95,7 +73,7 @@ class ItemServices {
     return await sqlService.getCartList();
   }
 
-  removeFromCart(int shopId) async {
-    return await sqlService.removeFromCart(shopId);
+  removeFromCart(int idTable) async {
+    return await sqlService.removeFromCart(idTable);
   }
 }
