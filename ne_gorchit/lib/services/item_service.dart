@@ -39,8 +39,8 @@ class ItemServices {
       return items;
     } else {
       // Save Record into DB & load record
-      List items = await saveToLocalDB();
-      return items;
+      bool loadedItems = await saveToLocalDB(items);
+      return loadedItems;
     }
   }
 
@@ -48,13 +48,15 @@ class ItemServices {
     return await storageService.getItem("isFirstTime") == 'true';
   }
 
-  Future saveToLocalDB() async {
-    List<Menu> items = this.items;
-    for (var i = 0; i < items.length; i++) {
-      await sqlService.saveRecord(items[i]);
+  Future<bool> saveToLocalDB(List<Menu> items) async {
+    try {
+      await sqlService.openDB(); // Открываем базу данных
+      await sqlService.saveDataToDB(items); // Сохраняем данные в базу данных
+      return true; // Успешное сохранение
+    } catch (e) {
+      print('Error saving data to local DB: $e');
+      return false; // Ошибка при сохранении
     }
-    storageService.setItem("isFirstTime", "true");
-    return await getLocalDBRecord();
   }
 
   Future getLocalDBRecord() async {

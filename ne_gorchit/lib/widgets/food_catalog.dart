@@ -4,6 +4,7 @@ import 'package:ne_gorchit/controller/cart_controller.dart';
 import 'package:ne_gorchit/model/menu.dart';
 import 'package:http/http.dart' as http;
 import 'package:ne_gorchit/services/network_manager.dart';
+import 'package:ne_gorchit/services/sql_service.dart';
 import 'package:ne_gorchit/widgets/bottom_bar.dart';
 import 'package:ne_gorchit/widgets/name_description.dart';
 
@@ -27,6 +28,12 @@ class _FoodMenuState extends State<FoodMenu> {
   bool _visibleOfBottomBar = false;
   int _count = 0;
   final HomePageController controller = Get.put(HomePageController());
+  SQLService sqlService = SQLService();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   set visibleOfBottomBar(SetValues values) => setState(() {
         _visibleOfBottomBar = values.value;
@@ -73,11 +80,17 @@ class _FoodMenuState extends State<FoodMenu> {
 
             print(controller.cartItems);
             return FoodItem(
+                // items: snapshot.data!,
+                // callback: (val, count) => setState(
+                //       () => {_visibleOfBottomBar = val, _count = count},
+                //     ));
                 items: snapshot.data!,
-                callback: (val, count) => setState(
-                      () => {_visibleOfBottomBar = val, _count = count},
-                    ));
+                callback: (val, count) => setState(() {
+                      _visibleOfBottomBar = val;
+                      _count = count;
+                    }));
           } else {
+            print(snapshot);
             return const Center(
               child: CircularProgressIndicator(),
             );
@@ -122,28 +135,20 @@ class _FoodItemState extends State<FoodItem> {
   void initState() {
     super.initState();
     // Инициализируем счетчики и флаги для каждого элемента
-    counters = List<int>.filled(widget.items[0].data.length, 0);
+    counters = List<int>.filled(widget.items.length, 0);
     _isButtonWithPriceDisabledList =
-        List<bool>.filled(widget.items[0].data.length, false);
+        List<bool>.filled(widget.items.length, false);
+    print('============');
+    print(counters);
   }
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount:
-          widget.items.fold<int>(0, (count, menu) => count + menu.data.length),
+      itemCount: widget.items.length,
       itemBuilder: (context, index) {
-        var menuIndex = 0;
-        var dataIndex = index;
-        for (var menu in widget.items) {
-          if (dataIndex < menu.data.length) {
-            break;
-          }
-          dataIndex -= menu.data.length;
-          menuIndex++;
-        }
-        var item = widget.items[menuIndex].data[dataIndex];
-        var resultUrl = imgUrl + item.image;
+        var item = widget.items[index];
+        var resultUrl = imgUrl + item.data[index].image;
         return Padding(
           padding: EdgeInsets.all(20.0),
           child: DecoratedBox(
@@ -171,7 +176,7 @@ class _FoodItemState extends State<FoodItem> {
                   Image.network(
                     resultUrl,
                   ),
-                  nameAndDescriptionFoodItem(item: item),
+                  nameAndDescriptionFoodItem(item: item.data[index]),
                   (!_isButtonWithPriceDisabledList[index])
                       ? Padding(
                           padding: const EdgeInsets.all(15.0),
@@ -190,7 +195,7 @@ class _FoodItemState extends State<FoodItem> {
                               );
                             },
                             child: Text(
-                              item.price.toString(),
+                              item.data[index].price.toString(),
                               style: TextStyle(
                                 fontSize: 18,
                               ),
@@ -277,7 +282,7 @@ class _FoodItemState extends State<FoodItem> {
                               ),
                             ),
                             Text(
-                              '${item.price * counters[index]}',
+                              '${item.data[index].price * counters[index]}',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,

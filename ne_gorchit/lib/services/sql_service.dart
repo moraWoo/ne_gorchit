@@ -5,11 +5,29 @@ import 'package:path/path.dart';
 class SQLService {
   Database? db;
 
+  Future<void> saveDataToDB(List<Menu> data) async {
+    try {
+      await openDB(); // Открываем базу данных, если она еще не открыта
+
+      await db?.transaction((txn) async {
+        for (var menu in data) {
+          for (var datum in menu.data) {
+            var qry =
+                'INSERT INTO shopping(name, image, price, fav, rating, description, idTable) VALUES("${datum.name}", "${datum.image}", ${datum.price}, ${datum.fav}, ${datum.rating}, "${datum.description}", ${datum.idTable})';
+            await txn.rawInsert(qry);
+          }
+        }
+      });
+    } catch (e) {
+      print("ERROR IN SAVE DATA TO DB: $e");
+    }
+  }
+
   Future openDB() async {
     try {
       // Get a location using getDatabasesPath
       var databasesPath = await getDatabasesPath();
-      String path = join(databasesPath, 'shopping_new.db');
+      String path = join(databasesPath, 'shopping_new1.db');
 
       // open the database
       db = await openDatabase(

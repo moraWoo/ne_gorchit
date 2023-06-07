@@ -2,12 +2,14 @@ import 'package:ne_gorchit/services/item_service.dart';
 import 'package:ne_gorchit/model/menu.dart';
 
 import 'package:get/get.dart';
+import 'package:ne_gorchit/services/sql_service.dart';
 
 class HomePageController extends GetxController {
   ItemServices itemServices = ItemServices();
   List<Menu> items = [];
   List<Menu> cartItems = [];
   bool isLoading = true;
+  SQLService sqlService = SQLService();
 
   @override
   void onInit() {
@@ -19,7 +21,7 @@ class HomePageController extends GetxController {
   loadDB() async {
     await itemServices.openDB();
     print('loadDB');
-    loadItems();
+    // await sqlService.saveDataToDB(data);
     getCardList();
   }
 

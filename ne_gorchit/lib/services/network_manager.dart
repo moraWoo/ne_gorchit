@@ -3,13 +3,25 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:ne_gorchit/model/menu.dart';
 import 'package:flutter/foundation.dart';
+import 'package:ne_gorchit/services/item_service.dart';
 
 Future<List<Menu>> fetchItems(http.Client client) async {
   final response =
       await client.get(Uri.parse('http://localhost:4000/api/items'));
-  // Use the compute function to run parsePhotos in a separate isolate.
-  print(response.body);
-  return compute(parseItems, response.body);
+  print(response);
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> responseData = json.decode(response.body);
+    List<Menu> items = [Menu.fromJson(responseData)];
+    print(items);
+    // Сохранение данных в базу данных
+    ItemServices itemServices = ItemServices();
+    await itemServices.openDB(); // Открываем базу данных
+    await itemServices.saveToLocalDB(items); // Сохраняем данные в базу данных
+
+    return items;
+  } else {
+    throw Exception('Failed to fetch items');
+  }
 }
 
 List<Menu> parseItems(String responseBody) {
