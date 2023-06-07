@@ -77,13 +77,25 @@ class _FoodMenuState extends State<FoodMenu> {
           } else if (snapshot.hasData) {
             Get.put(HomePageController());
             print('+++');
+            print('Data: ${snapshot.data}');
+            print(controller.cartItems.length);
 
-            print(controller.cartItems);
+            print('Data:');
+            for (var menu in snapshot.data!) {
+              for (var datum in menu.data) {
+                print('Name: ${datum.name}');
+                print('Description: ${datum.description}');
+                print('ID: ${datum.id}');
+                print('Image: ${datum.image}');
+                print('Price: ${datum.price}');
+                print('ID Table: ${datum.idTable}');
+                print('Fav: ${datum.fav}');
+                print('Rating: ${datum.rating}');
+                print('----------------');
+              }
+            }
+
             return FoodItem(
-                // items: snapshot.data!,
-                // callback: (val, count) => setState(
-                //       () => {_visibleOfBottomBar = val, _count = count},
-                //     ));
                 items: snapshot.data!,
                 callback: (val, count) => setState(() {
                       _visibleOfBottomBar = val;
@@ -116,7 +128,7 @@ class FoodItem extends StatefulWidget {
     required this.callback,
   });
 
-  List<Menu> items;
+  List<Menu> items = [];
 
   @override
   State<FoodItem> createState() => _FoodItemState();
@@ -130,16 +142,20 @@ class _FoodItemState extends State<FoodItem> {
   List<bool> _isButtonWithPriceDisabledList = [];
   int sumOfElements = 0;
   int _count = 0;
+  List<Menu> itemsNew = [];
 
   @override
   void initState() {
     super.initState();
-    // Инициализируем счетчики и флаги для каждого элемента
     counters = List<int>.filled(widget.items.length, 0);
     _isButtonWithPriceDisabledList =
         List<bool>.filled(widget.items.length, false);
     print('============');
     print(counters);
+    itemsNew = widget.items;
+    print('============1');
+    print('widget.items: $widget.items');
+    print(itemsNew.length);
   }
 
   @override
@@ -147,7 +163,7 @@ class _FoodItemState extends State<FoodItem> {
     return ListView.builder(
       itemCount: widget.items.length,
       itemBuilder: (context, index) {
-        var item = widget.items[index];
+        var item = itemsNew[index];
         var resultUrl = imgUrl + item.data[index].image;
         return Padding(
           padding: EdgeInsets.all(20.0),
