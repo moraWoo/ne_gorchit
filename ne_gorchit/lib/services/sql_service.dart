@@ -4,6 +4,20 @@ import 'package:path/path.dart';
 
 class SQLService {
   Database? db;
+  final String _databaseName = 'shopping_new1.db';
+
+  final String _tableName = 'shopping';
+
+  Future<Database> openNewDB() async {
+    final databasesPath = await getDatabasesPath();
+    final path = join(databasesPath, _databaseName);
+    return await openDatabase(path, version: 1);
+  }
+
+  Future<List<Map<String, dynamic>>> getShoppingData() async {
+    final db = await openNewDB();
+    return await db.query(_tableName);
+  }
 
   Future<void> saveDataToDB(List<Menu> data) async {
     try {

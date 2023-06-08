@@ -30,9 +30,37 @@ class _FoodMenuState extends State<FoodMenu> {
   final HomePageController controller = Get.put(HomePageController());
   SQLService sqlService = SQLService();
 
+  void loadDB() async {
+    await sqlService.openNewDB(); // Открываем базу данных
+    print('loadDB');
+    getShoppingData();
+  }
+
+  void getShoppingData() async {
+    try {
+      List<Map<String, dynamic>> shoppingData =
+          await sqlService.getShoppingData();
+      // Обработка полученных данных
+      print('getShoppingData');
+      print(shoppingData);
+
+      for (var item in shoppingData) {
+        print('Name: ${item['name']}');
+        print('Description: ${item['description']}');
+        print('ID: ${item['id']}');
+        print('Image: ${item['image']}');
+        print('Price: ${item['price']}');
+        print('----------------');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    getShoppingData();
   }
 
   set visibleOfBottomBar(SetValues values) => setState(() {
@@ -47,40 +75,19 @@ class _FoodMenuState extends State<FoodMenu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leadingWidth: 80,
-        leading: ElevatedButton.icon(
-          onPressed: () => Navigator.pushNamed(context, '/'),
-          icon: const Icon(Icons.arrow_back_ios),
-          label: const Text(''),
-          style: ElevatedButton.styleFrom(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            foregroundColor: Colors.black,
+          // ...
           ),
-        ),
-        title: const Text(
-          'Меню',
-          style: TextStyle(
-            color: Colors.black,
-          ),
-        ),
-      ),
       body: FutureBuilder<List<Menu>>(
         future: fetchItems(http.Client()),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            print(context);
-            print(snapshot);
-
+            print('An error has occurred: ${snapshot.error}');
             return const Center(child: Text('An error has occurred!'));
           } else if (snapshot.hasData) {
             Get.put(HomePageController());
-            print('+++');
-            print('Data: ${snapshot.data}');
-            print(controller.cartItems.length);
-
             print('Data:');
+            List<Datum> itemsDatum = [];
+
             for (var menu in snapshot.data!) {
               for (var datum in menu.data) {
                 print('Name: ${datum.name}');
@@ -92,17 +99,19 @@ class _FoodMenuState extends State<FoodMenu> {
                 print('Fav: ${datum.fav}');
                 print('Rating: ${datum.rating}');
                 print('----------------');
+                itemsDatum.add(datum);
               }
             }
 
             return FoodItem(
-                items: snapshot.data!,
-                callback: (val, count) => setState(() {
-                      _visibleOfBottomBar = val;
-                      _count = count;
-                    }));
+              items: itemsDatum,
+              //  snapshot.data!,
+              callback: (val, count) => setState(() {
+                _visibleOfBottomBar = val;
+                _count = count;
+              }),
+            );
           } else {
-            print(snapshot);
             return const Center(
               child: CircularProgressIndicator(),
             );
@@ -128,7 +137,7 @@ class FoodItem extends StatefulWidget {
     required this.callback,
   });
 
-  List<Menu> items = [];
+  List<Datum> items = [];
 
   @override
   State<FoodItem> createState() => _FoodItemState();
@@ -142,7 +151,7 @@ class _FoodItemState extends State<FoodItem> {
   List<bool> _isButtonWithPriceDisabledList = [];
   int sumOfElements = 0;
   int _count = 0;
-  List<Menu> itemsNew = [];
+  List<Datum> itemsNew = [];
 
   @override
   void initState() {
@@ -150,21 +159,16 @@ class _FoodItemState extends State<FoodItem> {
     counters = List<int>.filled(widget.items.length, 0);
     _isButtonWithPriceDisabledList =
         List<bool>.filled(widget.items.length, false);
-    print('============');
-    print(counters);
     itemsNew = widget.items;
-    print('============1');
-    print('widget.items: $widget.items');
-    print(itemsNew.length);
   }
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: widget.items.length,
+      itemCount: itemsNew.length,
       itemBuilder: (context, index) {
         var item = itemsNew[index];
-        var resultUrl = imgUrl + item.data[index].image;
+        var resultUrl = imgUrl + item.image;
         return Padding(
           padding: EdgeInsets.all(20.0),
           child: DecoratedBox(
@@ -192,7 +196,7 @@ class _FoodItemState extends State<FoodItem> {
                   Image.network(
                     resultUrl,
                   ),
-                  nameAndDescriptionFoodItem(item: item.data[index]),
+                  nameAndDescriptionFoodItem(item: item),
                   (!_isButtonWithPriceDisabledList[index])
                       ? Padding(
                           padding: const EdgeInsets.all(15.0),
@@ -211,7 +215,7 @@ class _FoodItemState extends State<FoodItem> {
                               );
                             },
                             child: Text(
-                              item.data[index].price.toString(),
+                              item.price.toString(),
                               style: TextStyle(
                                 fontSize: 18,
                               ),
@@ -298,7 +302,7 @@ class _FoodItemState extends State<FoodItem> {
                               ),
                             ),
                             Text(
-                              '${item.data[index].price * counters[index]}',
+                              '${item.price * counters[index]}',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
