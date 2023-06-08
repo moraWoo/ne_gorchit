@@ -29,6 +29,9 @@ class _FoodMenuState extends State<FoodMenu> {
   int _count = 0;
   final HomePageController controller = Get.put(HomePageController());
   SQLService sqlService = SQLService();
+  int countFromDB = 0;
+  List<Datum> items = [];
+  List<Datum> itemsDatum = [];
 
   void loadDB() async {
     await sqlService.openNewDB(); // Открываем базу данных
@@ -40,8 +43,28 @@ class _FoodMenuState extends State<FoodMenu> {
     try {
       List<Map<String, dynamic>> shoppingData =
           await sqlService.getShoppingData();
+      List<Datum> newData = [];
+
+      for (var item in shoppingData) {
+        newData.add(Datum(
+          name: item['name'],
+          description: item['description'],
+          id: item['id'],
+          image: item['image'],
+          price: item['price'],
+          idTable: item['idTable'],
+          fav: item['fav'],
+          rating: item['rating'],
+        ));
+      }
+
+      setState(() {
+        countFromDB = shoppingData.length;
+        items.addAll(newData); // Добавить новые элементы в items
+      });
+
       // Обработка полученных данных
-      print('getShoppingData');
+      print('getShoppingData: $shoppingData');
       print(shoppingData);
 
       for (var item in shoppingData) {
@@ -65,7 +88,7 @@ class _FoodMenuState extends State<FoodMenu> {
 
   set visibleOfBottomBar(SetValues values) => setState(() {
         _visibleOfBottomBar = values.value;
-        _count = values.count;
+        _count = countFromDB;
       });
 
   @override
@@ -75,8 +98,25 @@ class _FoodMenuState extends State<FoodMenu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          // ...
+        automaticallyImplyLeading: false,
+        leadingWidth: 80,
+        leading: ElevatedButton.icon(
+          onPressed: () => Navigator.pushNamed(context, '/'),
+          icon: const Icon(Icons.arrow_back_ios),
+          label: const Text(''),
+          style: ElevatedButton.styleFrom(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            foregroundColor: Colors.black,
           ),
+        ),
+        title: const Text(
+          'Меню',
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
+      ),
       body: FutureBuilder<List<Menu>>(
         future: fetchItems(http.Client()),
         builder: (context, snapshot) {
@@ -86,7 +126,6 @@ class _FoodMenuState extends State<FoodMenu> {
           } else if (snapshot.hasData) {
             Get.put(HomePageController());
             print('Data:');
-            List<Datum> itemsDatum = [];
 
             for (var menu in snapshot.data!) {
               for (var datum in menu.data) {
@@ -100,16 +139,20 @@ class _FoodMenuState extends State<FoodMenu> {
                 print('Rating: ${datum.rating}');
                 print('----------------');
                 itemsDatum.add(datum);
+                countFromDB += 1;
+                print('countFromDB: $countFromDB');
               }
             }
+            print('itemsDatum: $itemsDatum');
+            // items = itemsDatum;
 
             return FoodItem(
-              items: itemsDatum,
-              //  snapshot.data!,
+              items: items,
               callback: (val, count) => setState(() {
                 _visibleOfBottomBar = val;
-                _count = count;
+                _count = countFromDB;
               }),
+              count: countFromDB,
             );
           } else {
             return const Center(
@@ -130,14 +173,15 @@ typedef void BottomVisibleCallBack(bool val, int count);
 
 class FoodItem extends StatefulWidget {
   final BottomVisibleCallBack callback;
+  final int count;
+  List<Datum> items = [];
 
   FoodItem({
-    super.key,
     required this.items,
     required this.callback,
-  });
-
-  List<Datum> items = [];
+    required this.count,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<FoodItem> createState() => _FoodItemState();
@@ -151,23 +195,21 @@ class _FoodItemState extends State<FoodItem> {
   List<bool> _isButtonWithPriceDisabledList = [];
   int sumOfElements = 0;
   int _count = 0;
-  List<Datum> itemsNew = [];
 
   @override
   void initState() {
     super.initState();
-    counters = List<int>.filled(widget.items.length, 0);
-    _isButtonWithPriceDisabledList =
-        List<bool>.filled(widget.items.length, false);
-    itemsNew = widget.items;
+    counters = List<int>.filled(widget.count, 0);
+    _isButtonWithPriceDisabledList = List<bool>.filled(widget.count, false);
   }
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: itemsNew.length,
+      itemCount: widget.items.length,
       itemBuilder: (context, index) {
-        var item = itemsNew[index];
+        print('index: $index');
+        var item = widget.items[index];
         var resultUrl = imgUrl + item.image;
         return Padding(
           padding: EdgeInsets.all(20.0),
