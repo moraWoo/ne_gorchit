@@ -20,7 +20,6 @@ class FoodMenu extends StatefulWidget {
 class SetValues {
   final bool value;
   final int count;
-
   SetValues(this.value, this.count);
 }
 
@@ -35,7 +34,6 @@ class _FoodMenuState extends State<FoodMenu> {
 
   void loadDB() async {
     await sqlService.openNewDB(); // Открываем базу данных
-    print('loadDB');
     getShoppingData();
   }
 
@@ -144,7 +142,6 @@ class _FoodMenuState extends State<FoodMenu> {
               }
             }
             print('itemsDatum: $itemsDatum');
-            // items = itemsDatum;
 
             return FoodItem(
               items: items,
@@ -199,7 +196,7 @@ class _FoodItemState extends State<FoodItem> {
   @override
   void initState() {
     super.initState();
-    counters = List<int>.filled(widget.count, 0);
+    counters = List<int>.filled(widget.items.length, 0);
     _isButtonWithPriceDisabledList = List<bool>.filled(widget.count, false);
   }
 
