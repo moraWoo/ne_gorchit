@@ -7,6 +7,7 @@ class ItemServices {
   SQLService sqlService = SQLService();
   StorageService storageService = StorageService();
   List<Menu> shoppingList = [];
+  List<Menu> items = [];
 
   List<Menu> getShoppingItems() {
     int count = 1;
@@ -19,7 +20,33 @@ class ItemServices {
     return shoppingList;
   }
 
-  List<Menu> items = [];
+  void getShoppingData() async {
+    try {
+      List<Map<String, dynamic>> shoppingData =
+          await sqlService.getShoppingData();
+      List<Datum> newData = [];
+
+      for (var item in shoppingData) {
+        newData.add(Datum(
+          name: item['name'],
+          description: item['description'],
+          id: item['id'],
+          image: item['image'],
+          price: item['price'],
+          idTable: item['idTable'],
+          fav: item['fav'],
+          rating: item['rating'],
+        ));
+      }
+
+      // setState(() {
+      //   countFromDB = shoppingData.length;
+      //   items.addAll(newData); // Добавить новые элементы в items
+      // });
+    } catch (e) {
+      print(e);
+    }
+  }
 
   void main() {
     items = getShoppingItems();
@@ -67,8 +94,9 @@ class ItemServices {
     return await sqlService.setItemAsFavourite(id, flag);
   }
 
-  Future addToCart(Menu data) async {
-    return await sqlService.addToCart(data);
+  Future addToCart(Datum item) async {
+    print('addtocart itemservice: ${item.name}');
+    return await sqlService.saveDataToCartDB(item);
   }
 
   Future getCartList() async {

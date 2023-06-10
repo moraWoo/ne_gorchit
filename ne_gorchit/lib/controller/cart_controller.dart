@@ -6,8 +6,8 @@ import 'package:ne_gorchit/services/sql_service.dart';
 
 class HomePageController extends GetxController {
   ItemServices itemServices = ItemServices();
-  List<Menu> items = [];
-  List<Menu> cartItems = [];
+  List<Datum> items = [];
+  List<Datum> cartItems = [];
   bool isLoading = true;
   SQLService sqlService = SQLService();
 
@@ -19,88 +19,106 @@ class HomePageController extends GetxController {
   }
 
   loadDB() async {
-    await itemServices.openDB();
-    print('loadDB');
-    // await sqlService.saveDataToDB(data);
-    getCardList();
+    await sqlService.openNewDB(); // Открываем базу данных
+    getShoppingData();
   }
 
-  Menu? getItem(int id) {
-    for (var menu in items) {
-      for (var datum in menu.data) {
-        if (datum.id == id) {
-          return menu;
-        }
+  void getShoppingData() async {
+    try {
+      List<Map<String, dynamic>> shoppingData =
+          await sqlService.getShoppingData();
+
+      for (var item in shoppingData) {
+        items.add(Datum(
+          name: item['name'],
+          description: item['description'],
+          id: item['id'],
+          image: item['image'],
+          price: item['price'],
+          idTable: item['idTable'],
+          fav: item['fav'],
+          rating: item['rating'],
+        ));
       }
+    } catch (e) {
+      print(e);
     }
-    return null; // Если элемент с заданным id не найден
   }
+
+  // Menu? getItem(int id) {
+  //   for (var menu in items) {
+  //     for (var datum in menu) {
+  //       if (datum.id == id) {
+  //         return menu;
+  //       }
+  //     }
+  //   }
+  //   return null; // Если элемент с заданным id не найден
+  // }
 
   bool isAlreadyInCart(int id) {
-    for (var menu in cartItems) {
-      for (var datum in menu.data) {
-        if (datum.idTable == id) {
-          return true;
-        }
+    for (var datum in cartItems) {
+      if (datum.id == id) {
+        return true;
       }
     }
     return false;
   }
 
-  getCardList() async {
-    try {
-      List list = await itemServices.getCartList();
-      cartItems.clear();
-      list.forEach((element) {
-        Menu menu = Menu.fromJson(element);
-        cartItems.addAll(menu.data as Iterable<Menu>);
-      });
-      update();
-    } catch (e) {
-      print(e);
-    }
-  }
+  // getCardList() async {
+  //   try {
+  //     List list = await itemServices.getCartList();
+  //     cartItems.clear();
+  //     list.forEach((element) {
+  //       Menu menu = Menu.fromJson(element);
+  //       cartItems.addAll(menu.data as Iterable<Menu>);
+  //     });
+  //     update();
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
-  loadItems() async {
-    try {
-      isLoading = true;
-      update();
-      print('loadItems');
+  // loadItems() async {
+  //   try {
+  //     isLoading = true;
+  //     update();
+  //     print('loadItems');
 
-      List list = await itemServices.loadItems();
-      print('list: $list');
+  //     List list = await itemServices.loadItems();
+  //     print('list: $list');
 
-      items.clear();
-      list.forEach((element) {
-        Menu menu = Menu.fromJson(element);
-        items.add(menu);
-      });
+  //     items.clear();
+  //     list.forEach((element) {
+  //       Menu menu = Menu.fromJson(element);
+  //       items.add(menu);
+  //     });
 
-      isLoading = false;
-      update();
-    } catch (e) {
-      print(e);
-    }
-  }
+  //     isLoading = false;
+  //     update();
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
-  setToFav(int id, int flag) async {
-    for (var menu in items) {
-      for (var datum in menu.data) {
-        if (datum.id == id) {
-          datum.fav = flag;
-          update();
-          try {
-            await itemServices.setItemAsFavourite(id, flag);
-          } catch (e) {
-            print(e);
-          }
-          return;
-        }
-      }
-    }
-  }
+  // setToFav(int id, int flag) async {
+  //   for (var menu in items) {
+  //     for (var datum in menu.data) {
+  //       if (datum.id == id) {
+  //         datum.fav = flag;
+  //         update();
+  //         try {
+  //           await itemServices.setItemAsFavourite(id, flag);
+  //         } catch (e) {
+  //           print(e);
+  //         }
+  //         return;
+  //       }
+  //     }
+  //   }
+  // }
 
-  Future addToCart(Menu item) async {
+  Future addToCart(Datum item) async {
     isLoading = true;
     update();
     var result = await itemServices.addToCart(item);
@@ -109,14 +127,10 @@ class HomePageController extends GetxController {
     return result;
   }
 
-  removeFromCart(int idTable) async {
-    itemServices.removeFromCart(idTable);
-    for (var menu in cartItems) {
-      int index = menu.data.indexWhere((element) => element.idTable == idTable);
-      if (index > -1) {
-        menu.data.removeAt(index);
-        break;
-      }
+  removeFromCart(int id) async {
+    itemServices.removeFromCart(id);
+    if (id > -1) {
+      cartItems.removeAt(id);
     }
     update();
   }

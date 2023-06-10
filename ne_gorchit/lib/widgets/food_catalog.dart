@@ -29,68 +29,20 @@ class _FoodMenuState extends State<FoodMenu> {
   final HomePageController controller = Get.put(HomePageController());
   SQLService sqlService = SQLService();
   int countFromDB = 0;
-  List<Datum> items = [];
   List<Datum> itemsDatum = [];
-
-  void loadDB() async {
-    await sqlService.openNewDB(); // Открываем базу данных
-    getShoppingData();
-  }
-
-  void getShoppingData() async {
-    try {
-      List<Map<String, dynamic>> shoppingData =
-          await sqlService.getShoppingData();
-      List<Datum> newData = [];
-
-      for (var item in shoppingData) {
-        newData.add(Datum(
-          name: item['name'],
-          description: item['description'],
-          id: item['id'],
-          image: item['image'],
-          price: item['price'],
-          idTable: item['idTable'],
-          fav: item['fav'],
-          rating: item['rating'],
-        ));
-      }
-
-      setState(() {
-        countFromDB = shoppingData.length;
-        items.addAll(newData); // Добавить новые элементы в items
-      });
-
-      // Обработка полученных данных
-      print('getShoppingData: $shoppingData');
-      print(shoppingData);
-
-      for (var item in shoppingData) {
-        print('Name: ${item['name']}');
-        print('Description: ${item['description']}');
-        print('ID: ${item['id']}');
-        print('Image: ${item['image']}');
-        print('Price: ${item['price']}');
-        print('----------------');
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
 
   @override
   void initState() {
     super.initState();
-    getShoppingData();
+    controller.getShoppingData();
+    itemsDatum = controller.items;
+    print('itemsDatum: $itemsDatum');
   }
 
   set visibleOfBottomBar(SetValues values) => setState(() {
         _visibleOfBottomBar = values.value;
         _count = countFromDB;
       });
-
-  @override
-  int tabIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -123,33 +75,14 @@ class _FoodMenuState extends State<FoodMenu> {
             return const Center(child: Text('An error has occurred!'));
           } else if (snapshot.hasData) {
             Get.put(HomePageController());
-            print('Data:');
-
-            for (var menu in snapshot.data!) {
-              for (var datum in menu.data) {
-                print('Name: ${datum.name}');
-                print('Description: ${datum.description}');
-                print('ID: ${datum.id}');
-                print('Image: ${datum.image}');
-                print('Price: ${datum.price}');
-                print('ID Table: ${datum.idTable}');
-                print('Fav: ${datum.fav}');
-                print('Rating: ${datum.rating}');
-                print('----------------');
-                itemsDatum.add(datum);
-                countFromDB += 1;
-                print('countFromDB: $countFromDB');
-              }
-            }
-            print('itemsDatum: $itemsDatum');
 
             return FoodItem(
-              items: items,
+              items: itemsDatum,
               callback: (val, count) => setState(() {
                 _visibleOfBottomBar = val;
-                _count = countFromDB;
+                _count = itemsDatum.length;
               }),
-              count: countFromDB,
+              count: itemsDatum.length,
             );
           } else {
             return const Center(
@@ -192,6 +125,8 @@ class _FoodItemState extends State<FoodItem> {
   List<bool> _isButtonWithPriceDisabledList = [];
   int sumOfElements = 0;
   int _count = 0;
+  final HomePageController controller = Get.put(HomePageController());
+  List<Datum> cartItems = [];
 
   @override
   void initState() {
@@ -244,6 +179,9 @@ class _FoodItemState extends State<FoodItem> {
                               //=============================================================
                               if (counters[index] == 0) {
                                 counters[index]++;
+                                cartItems.add(item);
+                                controller.cartItems = cartItems;
+                                controller.addToCart(item);
                               }
                               sumOfElements = counters
                                   .reduce((value, element) => value + element);
@@ -280,6 +218,8 @@ class _FoodItemState extends State<FoodItem> {
 
                                   setState(() {
                                     counters[index]--;
+                                    // cartItems.remove(value);
+                                    controller.cartItems = cartItems;
                                     sumOfElements = counters.reduce(
                                         (value, element) => value + element);
                                     widget.callback(

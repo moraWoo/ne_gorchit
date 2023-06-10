@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ne_gorchit/controller/cart_controller.dart';
+import 'package:ne_gorchit/model/menu.dart';
 
 class bottomWidget extends StatefulWidget {
   final int count;
@@ -12,9 +15,24 @@ class bottomWidget extends StatefulWidget {
   State<bottomWidget> createState() => _bottomWidgetState();
 }
 
+List<Datum> items = [];
+
 class _bottomWidgetState extends State<bottomWidget> {
+  final HomePageController controller = Get.put(HomePageController());
+  getItemTotal(List<Datum> items) {
+    items = controller.cartItems;
+    double sum = 0.0;
+    items.forEach((datum) {
+      sum += datum.price;
+    });
+    print('iii: $items');
+    return "$sum ₸";
+  }
+
   @override
   Widget build(BuildContext context) {
+    getItemTotal(items);
+
     return Container(
       height: 120,
       color: Colors.white,
@@ -68,7 +86,7 @@ class _bottomWidgetState extends State<bottomWidget> {
                         style: TextStyle(color: Colors.black, fontSize: 20),
                       ),
                       Text(
-                        '3005 ₸',
+                        getItemTotal(items),
                         style: TextStyle(color: Colors.black),
                       ),
                     ],

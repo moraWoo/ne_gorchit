@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CartPage extends StatelessWidget {
-  List<Widget> generateCart(BuildContext context, Menu menu) {
-    return menu.data
+  var imgUrl = 'http://localhost:4000/';
+
+  List<Widget> generateCart(BuildContext context, List<Datum> menuList) {
+    return menuList
         .map((datum) => Padding(
               padding: EdgeInsets.all(5.0),
               child: Container(
@@ -31,7 +33,7 @@ class CartPage extends StatelessWidget {
                               topRight: Radius.circular(10.0),
                               bottomRight: Radius.circular(10.0)),
                           image: DecorationImage(
-                              image: NetworkImage(datum.image),
+                              image: NetworkImage(imgUrl + datum.image),
                               fit: BoxFit.fitHeight)),
                     ),
                     Expanded(
@@ -55,11 +57,10 @@ class CartPage extends StatelessWidget {
                                   child: InkResponse(
                                     onTap: () {
                                       Get.find<HomePageController>()
-                                          .removeFromCart(datum.idTable ?? 0);
+                                          .removeFromCart(datum.id ?? 0);
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
-                                              content: Text(
-                                                  "Item removed from cart successfully")));
+                                              content: Text('Блюдо удалено')));
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(right: 10.0),
@@ -75,7 +76,7 @@ class CartPage extends StatelessWidget {
                             SizedBox(
                               height: 5.0,
                             ),
-                            Text("Price ${datum.price.toString()}"),
+                            Text("Цена: ${datum.price.toString()}"),
                           ],
                         ),
                       ),
@@ -87,14 +88,12 @@ class CartPage extends StatelessWidget {
         .toList();
   }
 
-  getItemTotal(List<Menu> items) {
+  getItemTotal(List<Datum> items) {
     double sum = 0.0;
-    items.forEach((menu) {
-      menu.data.forEach((datum) {
-        sum += datum.price;
-      });
+    items.forEach((datum) {
+      sum += datum.price;
     });
-    return "\$$sum";
+    return "$sum ₸";
   }
 
   @override
@@ -104,7 +103,22 @@ class CartPage extends StatelessWidget {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cart list"),
+        automaticallyImplyLeading: false,
+        leadingWidth: 80,
+        leading: ElevatedButton.icon(
+          onPressed: () => Navigator.pushNamed(context, '/food_catalog'),
+          icon: const Icon(Icons.arrow_back_ios),
+          label: const Text(''),
+          style: ElevatedButton.styleFrom(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            foregroundColor: Colors.black,
+          ),
+        ),
+        title: Text(
+          'Корзина',
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       body: Column(
         children: [
@@ -119,9 +133,7 @@ class CartPage extends StatelessWidget {
                   }
                   return ListView(
                     shrinkWrap: true,
-                    children: controller.cartItems
-                        .expand((menu) => generateCart(context, menu))
-                        .toList(),
+                    children: generateCart(context, controller.cartItems),
                   );
                 },
               ),
@@ -141,7 +153,7 @@ class CartPage extends StatelessWidget {
                   builder: (_) {
                     return RichText(
                       text: TextSpan(
-                          text: "Total  ",
+                          text: "Всего  ",
                           style: TextStyle(color: Colors.black, fontSize: 18),
                           children: <TextSpan>[
                             TextSpan(
@@ -164,7 +176,7 @@ class CartPage extends StatelessWidget {
                       height: 40,
                       width: 100,
                       child: Text(
-                        "Checkout",
+                        "Заказать",
                         style: TextStyle(fontSize: 18),
                       ),
                     )),

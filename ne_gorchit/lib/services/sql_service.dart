@@ -6,7 +6,8 @@ class SQLService {
   Database? db;
   final String _databaseName = 'shopping_new1.db';
 
-  final String _tableName = 'shopping';
+  final String _tableNameMenu = 'shopping';
+  final String _tableNameCart = 'cart_list';
 
   Future<Database> openNewDB() async {
     final databasesPath = await getDatabasesPath();
@@ -16,7 +17,7 @@ class SQLService {
 
   Future<List<Map<String, dynamic>>> getShoppingData() async {
     final db = await openNewDB();
-    return await db.query(_tableName);
+    return await db.query(_tableNameMenu);
   }
 
   Future<void> saveDataToDB(List<Menu> data) async {
@@ -31,6 +32,25 @@ class SQLService {
             await txn.rawInsert(qry);
           }
         }
+      });
+    } catch (e) {
+      print("ERROR IN SAVE DATA TO DB: $e");
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getCartData() async {
+    final db = await openNewDB();
+    return await db.query(_tableNameCart);
+  }
+
+  Future<void> saveDataToCartDB(Datum item) async {
+    try {
+      await openDB(); // Открываем базу данных, если она еще не открыта
+
+      await db?.transaction((txn) async {
+        var qry =
+            'INSERT INTO cart_list(name, image, price, fav, rating, description, idTable) VALUES(${item.name}, ${item.image}, ${item.price}, ${item.fav}, ${item.rating}, ${item.description}, ${item.idTable})';
+        await txn.rawInsert(qry);
       });
     } catch (e) {
       print("ERROR IN SAVE DATA TO DB: $e");
@@ -125,20 +145,19 @@ class SQLService {
     }
   }
 
-  Future addToCart(Menu menu) async {
+  Future addToCart(Datum item) async {
     await this.db?.transaction((txn) async {
-      for (var datum in menu.data) {
-        var qry =
-            'INSERT INTO cart_list(name, image, price, fav, rating, description, idTable) VALUES("${datum.name}", "${datum.image}", ${datum.price}, ${datum.fav}, ${datum.rating}, "${datum.description}", ${datum.idTable})';
-        print('qry: $qry');
-        int id1 = await txn.rawInsert(qry);
-        return id1;
-      }
+      var qry =
+          'INSERT INTO cart_list(name, image, price, fav, rating, description, idTable,) VALUES("${item.name}", "${item.image}", "${item.price}", "${item.fav}", "${item.rating}", "${item.description}", "${item.idTable}")';
+      print('qry: $qry');
+      int id1 = await txn.rawInsert(qry);
+      print('item saved in cart');
+      return id1;
     });
   }
 
-  Future removeFromCart(int idTable) async {
-    var qry = "DELETE FROM cart_list where idTable = ${idTable}";
+  Future removeFromCart(int id) async {
+    var qry = "DELETE FROM cart_list where idTable = ${id}";
     return await this.db?.rawDelete(qry);
   }
 }
