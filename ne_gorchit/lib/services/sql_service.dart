@@ -157,7 +157,7 @@ class SQLService {
   }
 
   Future removeFromCart(int id) async {
-    var qry = "DELETE FROM cart_list where idTable = ${id}";
+    var qry = "DELETE FROM cart_list where id = ${id}";
     return await this.db?.rawDelete(qry);
   }
 }

@@ -140,7 +140,6 @@ class _FoodItemState extends State<FoodItem> {
     return ListView.builder(
       itemCount: widget.items.length,
       itemBuilder: (context, index) {
-        print('index: $index');
         var item = widget.items[index];
         var resultUrl = imgUrl + item.image;
         return Padding(
@@ -218,7 +217,7 @@ class _FoodItemState extends State<FoodItem> {
 
                                   setState(() {
                                     counters[index]--;
-                                    // cartItems.remove(value);
+                                    controller.removeFromCart(item.id);
                                     controller.cartItems = cartItems;
                                     sumOfElements = counters.reduce(
                                         (value, element) => value + element);
@@ -293,6 +292,9 @@ class _FoodItemState extends State<FoodItem> {
                                 onPressed: () {
                                   setState(() {
                                     counters[index]++;
+                                    cartItems.add(item);
+                                    controller.cartItems = cartItems;
+                                    controller.addToCart(item);
                                     sumOfElements = counters.reduce(
                                         (value, element) => value + element);
                                     widget.callback(
