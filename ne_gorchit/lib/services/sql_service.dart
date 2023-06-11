@@ -49,7 +49,7 @@ class SQLService {
 
       await db?.transaction((txn) async {
         var qry =
-            'INSERT INTO cart_list(name, image, price, fav, rating, description, idTable) VALUES(${item.name}, ${item.image}, ${item.price}, ${item.fav}, ${item.rating}, ${item.description}, ${item.idTable})';
+            'INSERT INTO cart_list(name, image, price, fav, rating, description, idTable) VALUES("${item.name}", "${item.image}", "${item.price}", "${item.fav}", "${item.rating}", "${item.description}", "${item.idTable}")';
         await txn.rawInsert(qry);
       });
     } catch (e) {

@@ -38,11 +38,6 @@ class ItemServices {
           rating: item['rating'],
         ));
       }
-
-      // setState(() {
-      //   countFromDB = shoppingData.length;
-      //   items.addAll(newData); // Добавить новые элементы в items
-      // });
     } catch (e) {
       print(e);
     }
