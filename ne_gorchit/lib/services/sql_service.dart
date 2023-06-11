@@ -4,7 +4,7 @@ import 'package:path/path.dart';
 
 class SQLService {
   Database? db;
-  final String _databaseName = 'shopping_new1.db';
+  final String _databaseName = 'shopping_new2.db';
 
   final String _tableNameMenu = 'shopping';
   final String _tableNameCart = 'cart_list';
@@ -61,7 +61,7 @@ class SQLService {
     try {
       // Get a location using getDatabasesPath
       var databasesPath = await getDatabasesPath();
-      String path = join(databasesPath, 'shopping_new1.db');
+      String path = join(databasesPath, 'shopping_new2.db');
 
       // open the database
       db = await openDatabase(
