@@ -70,9 +70,21 @@ class ItemServices {
     return await storageService.getItem("isFirstTime") == 'true';
   }
 
+  // Future<bool> saveToLocalDB(List<Menu> items) async {
+  //   try {
+  //     await sqlService.openDB(); // Открываем базу данных
+  //     print('items in itemService: $items');
+  //     await sqlService.saveDataToDB(items); // Сохраняем данные в базу данных
+  //     return true; // Успешное сохранение
+  //   } catch (e) {
+  //     print('Error saving data to local DB: $e');
+  //     return false; // Ошибка при сохранении
+  //   }
+  // }
+
   Future<bool> saveToLocalDB(List<Menu> items) async {
     try {
-      await sqlService.openDB(); // Открываем базу данных
+      print('items in itemService: $items');
       await sqlService.saveDataToDB(items); // Сохраняем данные в базу данных
       return true; // Успешное сохранение
     } catch (e) {
@@ -98,7 +110,21 @@ class ItemServices {
     return await sqlService.getCartList();
   }
 
-  removeFromCart(int idTable) async {
-    return await sqlService.removeFromCart(idTable);
+  removeFromCart(int id) async {
+    return await sqlService.removeFromCart(id);
+  }
+
+  eraseCart() async {
+    return await sqlService.eraseCart();
+  }
+
+  Future<bool> checkIfUnique(Datum item) async {
+    List<Datum> existingItems = await sqlService.getItemsRecord();
+    for (Datum existingItem in existingItems) {
+      if (existingItem.id == item.id) {
+        return false; // Элемент уже существует, не уникален
+      }
+    }
+    return true; // Элемент уникален
   }
 }

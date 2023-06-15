@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ne_gorchit/controller/cart_controller.dart';
+import 'package:ne_gorchit/controller/controller.dart';
 import 'package:ne_gorchit/model/menu.dart';
 import 'package:http/http.dart' as http;
 import 'package:ne_gorchit/services/network_manager.dart';
@@ -37,7 +37,23 @@ class _FoodMenuState extends State<FoodMenu> {
     controller.getShoppingData();
     itemsDatum = controller.items;
     print('itemsDatum: $itemsDatum');
+    // controller.getShoppingData().then((data) {
+    //   setState(() {
+    //     itemsDatum = data;
+    //   });
+    // });
   }
+  // void initState() {
+  //   super.initState();
+  //   controller.getShoppingData();
+  //   itemsDatum = controller.items;
+  //   print('itemsDatum: $itemsDatum');
+  //   sqlService.getShoppingData().then((data) {
+  //     setState(() {
+  //       itemsDatum = controller.items;
+  //     });
+  //   });
+  // }
 
   set visibleOfBottomBar(SetValues values) => setState(() {
         _visibleOfBottomBar = values.value;
@@ -46,6 +62,7 @@ class _FoodMenuState extends State<FoodMenu> {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(HomePageController()).getShoppingData();
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -75,15 +92,31 @@ class _FoodMenuState extends State<FoodMenu> {
             return const Center(child: Text('An error has occurred!'));
           } else if (snapshot.hasData) {
             Get.put(HomePageController());
-
-            return FoodItem(
-              items: itemsDatum,
-              callback: (val, count) => setState(() {
-                _visibleOfBottomBar = val;
-                _count = itemsDatum.length;
-              }),
-              count: itemsDatum.length,
-            );
+            return FutureBuilder<bool>(
+                future: sqlService.isTableNotEmpty(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && snapshot.data == true) {
+                    return FoodItem(
+                      items: itemsDatum,
+                      callback: (val, count) {
+                        setState(() {
+                          _visibleOfBottomBar = val;
+                          _count = count;
+                        });
+                      },
+                      count: _count,
+                    );
+                  } else {
+                    return FoodItem(
+                      items: itemsDatum,
+                      callback: (val, count) => setState(() {
+                        _visibleOfBottomBar = val;
+                        _count = itemsDatum.length;
+                      }),
+                      count: itemsDatum.length,
+                    );
+                  }
+                });
           } else {
             return const Center(
               child: CircularProgressIndicator(),
@@ -91,8 +124,36 @@ class _FoodMenuState extends State<FoodMenu> {
           }
         },
       ),
+      // body: GetBuilder<HomePageController>(
+      //   builder: (controller) {
+      //     if (controller.items.isEmpty) {
+      //       print('controller.items: ${controller.items}');
+      //       return Center(
+      //         child: CircularProgressIndicator(),
+      //       );
+      //     } else {
+      //       return ListView.builder(
+      //         itemCount: controller.items.length,
+      //         itemBuilder: (context, index) {
+      //           List<Datum> menu = controller.items;
+      //           return FoodItem(
+      //             items: menu,
+      //             callback: (val, count) => setState(
+      //               () {
+      //                 _visibleOfBottomBar = val;
+      //                 _count = menu.length;
+      //               },
+      //             ),
+      //             count: menu.length,
+      //           );
+      //           // Создайте и отобразите карточку с информацией из объекта `menu`
+      //         },
+      //       );
+      //     }
+      //   },
+      // ),
       bottomNavigationBar: Visibility(
-        visible: _visibleOfBottomBar,
+        visible: _visibleOfBottomBar || itemsDatum.isNotEmpty,
         child: bottomWidget(count: _count),
       ),
     );
@@ -127,12 +188,31 @@ class _FoodItemState extends State<FoodItem> {
   int _count = 0;
   final HomePageController controller = Get.put(HomePageController());
   List<Datum> cartItems = [];
+  SQLService sqlService = SQLService();
 
   @override
   void initState() {
     super.initState();
+
+    sqlService = SQLService();
     counters = List<int>.filled(widget.items.length, 0);
-    _isButtonWithPriceDisabledList = List<bool>.filled(widget.count, false);
+    _isButtonWithPriceDisabledList =
+        List<bool>.filled(widget.items.length, false);
+    counters = List<int>.filled(widget.items.length, 0);
+
+    // Получение данных из таблицы cart_list
+    sqlService.getCartList().then((list) {
+      setState(() {
+        cartItems = list;
+        print('list: $list');
+        _count = cartItems.length;
+        for (var item in cartItems) {
+          counters[widget.items.indexWhere((datum) => datum.id == item.id)]++;
+          _isButtonWithPriceDisabledList[
+              widget.items.indexWhere((datum) => datum.id == item.id)] = true;
+        }
+      });
+    });
   }
 
   @override
@@ -170,6 +250,7 @@ class _FoodItemState extends State<FoodItem> {
                     resultUrl,
                   ),
                   nameAndDescriptionFoodItem(item: item),
+                  // (!_isButtonWithPriceDisabledList[index])
                   (!_isButtonWithPriceDisabledList[index])
                       ? Padding(
                           padding: const EdgeInsets.all(15.0),

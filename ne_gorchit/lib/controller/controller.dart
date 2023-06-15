@@ -19,11 +19,11 @@ class HomePageController extends GetxController {
   }
 
   loadDB() async {
-    await sqlService.openNewDB(); // Открываем базу данных
+    await sqlService.openDB(); // Открываем базу данных
     getShoppingData();
   }
 
-  void getShoppingData() async {
+  Future<void> getShoppingData() async {
     try {
       List<Map<String, dynamic>> shoppingData =
           await sqlService.getShoppingData();
@@ -117,6 +117,12 @@ class HomePageController extends GetxController {
   //     }
   //   }
   // }
+
+  Future eraseCart() async {
+    itemServices.eraseCart();
+    cartItems.remove;
+    update();
+  }
 
   Future addToCart(Datum item) async {
     isLoading = true;

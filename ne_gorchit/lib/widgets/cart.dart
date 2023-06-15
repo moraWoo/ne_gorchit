@@ -1,15 +1,16 @@
-import 'package:ne_gorchit/controller/cart_controller.dart';
+import 'package:ne_gorchit/controller/controller.dart';
 import 'package:ne_gorchit/model/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CartPage extends StatelessWidget {
   var imgUrl = 'http://localhost:4000/';
+  final HomePageController controller = Get.put(HomePageController());
 
   List<Widget> generateCart(BuildContext context, List<Datum> menuList) {
     return menuList
         .map((datum) => Padding(
-              padding: EdgeInsets.all(5.0),
+              padding: const EdgeInsets.all(5.0),
               child: Container(
                 decoration: BoxDecoration(
                     color: Colors.white12,
@@ -26,10 +27,10 @@ class CartPage extends StatelessWidget {
                       height: 100.0,
                       width: 100.0,
                       decoration: BoxDecoration(
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(color: Colors.black12, blurRadius: 5.0)
                           ],
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                               topRight: Radius.circular(10.0),
                               bottomRight: Radius.circular(10.0)),
                           image: DecorationImage(
@@ -57,12 +58,16 @@ class CartPage extends StatelessWidget {
                                   child: InkResponse(
                                     onTap: () {
                                       Get.find<HomePageController>()
-                                          .removeFromCart(datum.id ?? 0);
+                                          .removeFromCart(datum.id - 1);
                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content: Text('Блюдо удалено')));
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              'Блюдо удалено: ${datum.id - 1}'),
+                                        ),
+                                      );
                                     },
-                                    child: Padding(
+                                    child: const Padding(
                                       padding: EdgeInsets.only(right: 10.0),
                                       child: Icon(
                                         Icons.remove_circle,
@@ -73,7 +78,7 @@ class CartPage extends StatelessWidget {
                                 )
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 5.0,
                             ),
                             Text("Цена: ${datum.price.toString()}"),
@@ -106,7 +111,10 @@ class CartPage extends StatelessWidget {
         automaticallyImplyLeading: false,
         leadingWidth: 80,
         leading: ElevatedButton.icon(
-          onPressed: () => Navigator.pushNamed(context, '/food_catalog'),
+          onPressed: () => {
+            Navigator.pushNamed(context, '/food_catalog'),
+            // controller.eraseCart(),
+          },
           icon: const Icon(Icons.arrow_back_ios),
           label: const Text(''),
           style: ElevatedButton.styleFrom(
@@ -115,7 +123,7 @@ class CartPage extends StatelessWidget {
             foregroundColor: Colors.black,
           ),
         ),
-        title: Text(
+        title: const Text(
           'Корзина',
           style: TextStyle(color: Colors.black),
         ),
@@ -127,7 +135,7 @@ class CartPage extends StatelessWidget {
               child: GetBuilder<HomePageController>(
                 builder: (_) {
                   if (controller.cartItems.length == 0) {
-                    return Center(
+                    return const Center(
                       child: Text("No item found"),
                     );
                   }
@@ -154,12 +162,14 @@ class CartPage extends StatelessWidget {
                     return RichText(
                       text: TextSpan(
                           text: "Всего  ",
-                          style: TextStyle(color: Colors.black, fontSize: 18),
+                          style: const TextStyle(
+                              color: Colors.black, fontSize: 18),
                           children: <TextSpan>[
                             TextSpan(
                                 text: getItemTotal(controller.cartItems)
                                     .toString(),
-                                style: TextStyle(fontWeight: FontWeight.bold))
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold))
                           ]),
                     );
                   },
@@ -175,7 +185,7 @@ class CartPage extends StatelessWidget {
                       alignment: Alignment.center,
                       height: 40,
                       width: 100,
-                      child: Text(
+                      child: const Text(
                         "Заказать",
                         style: TextStyle(fontSize: 18),
                       ),
