@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ne_gorchit/services/network_manager.dart';
 import 'package:ne_gorchit/widgets/main_buttons.dart';
+import 'package:http/http.dart' as http;
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -9,6 +11,12 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
+  @override
+  void initState() {
+    super.initState();
+    fetchItems(http.Client());
+  }
+
   @override
   Widget build(BuildContext context) {
     return ColoredBox(

@@ -20,16 +20,25 @@ class HomePageController extends GetxController {
 
   loadDB() async {
     await sqlService.openDB(); // Открываем базу данных
-    getShoppingData();
   }
 
-  Future<void> getShoppingData() async {
+  // Future<<List<Menu>> getShoppingData() async {
+  //   items = await sqlService.getShoppingData();
+  // return items;
+  // }
+
+  // Future<List<Map<String, dynamic>>> getShoppingData() async {
+  //   return sqlService.getShoppingData();
+  // }
+
+  Future<List<Datum>> getShoppingData() async {
     try {
       List<Map<String, dynamic>> shoppingData =
           await sqlService.getShoppingData();
+      List<Datum> newData = [];
 
       for (var item in shoppingData) {
-        items.add(Datum(
+        newData.add(Datum(
           name: item['name'],
           description: item['description'],
           id: item['id'],
@@ -40,10 +49,35 @@ class HomePageController extends GetxController {
           rating: item['rating'],
         ));
       }
+
+      return newData; // Вернуть преобразованный список
     } catch (e) {
       print(e);
+      return []; // Вернуть пустой список в случае ошибки
     }
   }
+
+  // Future<void> getShoppingData() async {
+  //   try {
+  //     List<Map<String, dynamic>> shoppingData =
+  //         await sqlService.getShoppingData();
+
+  //     for (var item in shoppingData) {
+  //       items.add(Datum(
+  //         name: item['name'],
+  //         description: item['description'],
+  //         id: item['id'],
+  //         image: item['image'],
+  //         price: item['price'],
+  //         idTable: item['idTable'],
+  //         fav: item['fav'],
+  //         rating: item['rating'],
+  //       ));
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   // Menu? getItem(int id) {
   //   for (var menu in items) {

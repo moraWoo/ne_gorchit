@@ -34,26 +34,16 @@ class _FoodMenuState extends State<FoodMenu> {
   @override
   void initState() {
     super.initState();
-    controller.getShoppingData();
+    controller.loadDB();
     itemsDatum = controller.items;
     print('itemsDatum: $itemsDatum');
-    // controller.getShoppingData().then((data) {
-    //   setState(() {
-    //     itemsDatum = data;
-    //   });
-    // });
+    controller.getShoppingData().then((data) {
+      setState(() {
+        print('initState data: $data');
+        itemsDatum = data;
+      });
+    });
   }
-  // void initState() {
-  //   super.initState();
-  //   controller.getShoppingData();
-  //   itemsDatum = controller.items;
-  //   print('itemsDatum: $itemsDatum');
-  //   sqlService.getShoppingData().then((data) {
-  //     setState(() {
-  //       itemsDatum = controller.items;
-  //     });
-  //   });
-  // }
 
   set visibleOfBottomBar(SetValues values) => setState(() {
         _visibleOfBottomBar = values.value;
@@ -84,8 +74,9 @@ class _FoodMenuState extends State<FoodMenu> {
           ),
         ),
       ),
-      body: FutureBuilder<List<Menu>>(
-        future: fetchItems(http.Client()),
+      body: FutureBuilder<void>(
+        future: controller.getShoppingData(),
+        // fetchItems(http.Client()),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             print('An error has occurred: ${snapshot.error}');
@@ -124,34 +115,6 @@ class _FoodMenuState extends State<FoodMenu> {
           }
         },
       ),
-      // body: GetBuilder<HomePageController>(
-      //   builder: (controller) {
-      //     if (controller.items.isEmpty) {
-      //       print('controller.items: ${controller.items}');
-      //       return Center(
-      //         child: CircularProgressIndicator(),
-      //       );
-      //     } else {
-      //       return ListView.builder(
-      //         itemCount: controller.items.length,
-      //         itemBuilder: (context, index) {
-      //           List<Datum> menu = controller.items;
-      //           return FoodItem(
-      //             items: menu,
-      //             callback: (val, count) => setState(
-      //               () {
-      //                 _visibleOfBottomBar = val;
-      //                 _count = menu.length;
-      //               },
-      //             ),
-      //             count: menu.length,
-      //           );
-      //           // Создайте и отобразите карточку с информацией из объекта `menu`
-      //         },
-      //       );
-      //     }
-      //   },
-      // ),
       bottomNavigationBar: Visibility(
         visible: _visibleOfBottomBar || itemsDatum.isNotEmpty,
         child: bottomWidget(count: _count),
@@ -199,7 +162,6 @@ class _FoodItemState extends State<FoodItem> {
     _isButtonWithPriceDisabledList =
         List<bool>.filled(widget.items.length, false);
     counters = List<int>.filled(widget.items.length, 0);
-
     // Получение данных из таблицы cart_list
     sqlService.getCartList().then((list) {
       setState(() {
@@ -299,6 +261,7 @@ class _FoodItemState extends State<FoodItem> {
                                   setState(() {
                                     counters[index]--;
                                     controller.removeFromCart(item.id);
+                                    print('remove from cart');
                                     controller.cartItems = cartItems;
                                     sumOfElements = counters.reduce(
                                         (value, element) => value + element);

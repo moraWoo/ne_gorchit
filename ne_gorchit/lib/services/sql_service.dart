@@ -12,6 +12,7 @@ class SQLService {
 
   Future<List<Map<String, dynamic>>> getShoppingData() async {
     final db = await openDB();
+    print('1234: ${await db?.query(_tableNameMenu)}');
     return await db?.query(_tableNameMenu) ??
         []; // Добавлено условие и возврат пустого списка при null
   }
