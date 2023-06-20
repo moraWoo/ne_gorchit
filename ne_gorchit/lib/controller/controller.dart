@@ -167,11 +167,28 @@ class HomePageController extends GetxController {
     return result;
   }
 
+  // removeFromCart(int id) async {
+  //   itemServices.removeFromCart(id);
+  //   if (id > -1) {
+  //     cartItems.removeAt(id);
+  //   }
+  //   update();
+  // }
   removeFromCart(int id) async {
-    itemServices.removeFromCart(id);
-    if (id > -1) {
-      cartItems.removeAt(id);
+    await itemServices.removeFromCart(id);
+    Datum removedItem;
+
+    for (var item in cartItems) {
+      if (item.id == id) {
+        removedItem = item;
+        break;
+      }
     }
+
+    // if (removedItem != null) {
+    //   cartItems.remove(removedItem);
+    // }
+
     update();
   }
 }

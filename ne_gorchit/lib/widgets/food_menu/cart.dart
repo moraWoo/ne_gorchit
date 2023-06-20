@@ -112,7 +112,7 @@ class CartPage extends StatelessWidget {
         leadingWidth: 80,
         leading: ElevatedButton.icon(
           onPressed: () => {
-            Navigator.pushNamed(context, '/food_catalog'),
+            Navigator.pushNamed(context, '/food_catalog2'),
             // controller.eraseCart(),
           },
           icon: const Icon(Icons.arrow_back_ios),

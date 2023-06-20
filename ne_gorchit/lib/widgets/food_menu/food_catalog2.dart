@@ -83,7 +83,7 @@ class _FoodMenuNewState extends State<FoodMenuNew> {
                 future: sqlService.isTableNotEmpty(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData && snapshot.data == true) {
-                    return FoodCard(
+                    return ListOfFoodCard(
                       items: itemsDatum,
                       callback: (val, count) {
                         setState(() {
@@ -94,7 +94,7 @@ class _FoodMenuNewState extends State<FoodMenuNew> {
                       count: _count,
                     );
                   } else {
-                    return FoodItem(
+                    return ListOfFoodCard(
                       items: itemsDatum,
                       callback: (val, count) => setState(() {
                         _visibleOfBottomBar = val;
