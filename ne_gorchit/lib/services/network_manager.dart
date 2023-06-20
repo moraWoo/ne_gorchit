@@ -8,14 +8,12 @@ import 'package:ne_gorchit/services/item_service.dart';
 Future<List<Menu>> fetchItems(http.Client client) async {
   final response =
       await client.get(Uri.parse('http://localhost:4000/api/items'));
-  print(response);
   if (response.statusCode == 200) {
     final Map<String, dynamic> responseData = json.decode(response.body);
     List<Menu> items = [Menu.fromJson(responseData)];
     // Сохранение данных в базу данных
     ItemServices itemServices = ItemServices();
     await itemServices.openDB(); // Открываем базу данных
-    print('items: $items');
     await itemServices.saveToLocalDB(items); // Сохраняем данные в базу данных
     return items;
   } else {

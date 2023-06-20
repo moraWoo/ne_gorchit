@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ne_gorchit/theme/app_colors.dart';
-import 'package:ne_gorchit/widgets/cart.dart';
+import 'package:ne_gorchit/widgets/food_menu/cart.dart';
 import 'package:ne_gorchit/widgets/client_bill.dart';
 import 'package:ne_gorchit/widgets/food_catalog.dart';
+import 'package:ne_gorchit/widgets/food_menu/food_catalog2.dart';
 import 'package:ne_gorchit/widgets/main_menu.dart';
 
 void main() {
@@ -30,8 +31,8 @@ class MainApp extends StatelessWidget {
         '/food_catalog': (context) => FoodMenu(),
         '/client_bill': (context) => ClientBill(),
         '/cart': (context) => CartPage(),
+        '/food_catalog2': (context) => FoodMenuNew(),
       },
-      // initialRoute: '/main_menu',
       initialRoute: '/',
     );
   }

@@ -58,12 +58,12 @@ class CartPage extends StatelessWidget {
                                   child: InkResponse(
                                     onTap: () {
                                       Get.find<HomePageController>()
-                                          .removeFromCart(datum.id - 1);
+                                          .removeFromCart(datum.id);
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         SnackBar(
                                           content: Text(
-                                              'Блюдо удалено: ${datum.id - 1}'),
+                                              'Блюдо удалено: ${datum.id}'),
                                         ),
                                       );
                                     },
@@ -166,10 +166,11 @@ class CartPage extends StatelessWidget {
                               color: Colors.black, fontSize: 18),
                           children: <TextSpan>[
                             TextSpan(
-                                text: getItemTotal(controller.cartItems)
-                                    .toString(),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold))
+                              text:
+                                  getItemTotal(controller.cartItems).toString(),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            )
                           ]),
                     );
                   },

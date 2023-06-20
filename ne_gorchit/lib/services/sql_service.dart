@@ -12,7 +12,6 @@ class SQLService {
 
   Future<List<Map<String, dynamic>>> getShoppingData() async {
     final db = await openDB();
-    print('1234: ${await db?.query(_tableNameMenu)}');
     return await db?.query(_tableNameMenu) ??
         []; // Добавлено условие и возврат пустого списка при null
   }
@@ -31,7 +30,6 @@ class SQLService {
           path,
           version: 1,
           onCreate: (Database db, int version) async {
-            print('db: $db');
             this.db = db;
             createTables();
           },
@@ -50,11 +48,9 @@ class SQLService {
   }
 
   Future<void> saveDataToDB(List<Menu> data) async {
-    print('data: $data');
     Database? db = await openDB();
     try {
       List<Map<String, dynamic>> existingData = await getShoppingData();
-      print('existingData: $existingData');
 
       for (var menu in data) {
         bool isUnique = true;
@@ -177,8 +173,7 @@ class SQLService {
   Future addToCart(Datum item) async {
     await this.db?.transaction((txn) async {
       var qry =
-          'INSERT INTO cart_list(name, image, price, fav, rating, description, idTable,) VALUES("${item.name}", "${item.image}", "${item.price}", "${item.fav}", "${item.rating}", "${item.description}", "${item.idTable}")';
-      print('qry: $qry');
+          'INSERT INTO cart_list(name, image, price, fav, rating, description, idTable, ) VALUES("${item.name}", "${item.image}", "${item.price}", "${item.fav}", "${item.rating}", "${item.description}", "${item.idTable}")';
       int id1 = await txn.rawInsert(qry);
       print('item saved in cart');
       return id1;
@@ -212,7 +207,6 @@ class SQLService {
     var result = await db?.query(_tableNameCart);
     if (result != null && result.isNotEmpty) {
       var cartList = result.map((row) => Datum.fromJson(row)).toList();
-      print('cartList: $cartList');
       return cartList;
     }
     return [];

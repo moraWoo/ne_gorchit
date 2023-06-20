@@ -70,21 +70,8 @@ class ItemServices {
     return await storageService.getItem("isFirstTime") == 'true';
   }
 
-  // Future<bool> saveToLocalDB(List<Menu> items) async {
-  //   try {
-  //     await sqlService.openDB(); // Открываем базу данных
-  //     print('items in itemService: $items');
-  //     await sqlService.saveDataToDB(items); // Сохраняем данные в базу данных
-  //     return true; // Успешное сохранение
-  //   } catch (e) {
-  //     print('Error saving data to local DB: $e');
-  //     return false; // Ошибка при сохранении
-  //   }
-  // }
-
   Future<bool> saveToLocalDB(List<Menu> items) async {
     try {
-      print('items in itemService: $items');
       await sqlService.saveDataToDB(items); // Сохраняем данные в базу данных
       return true; // Успешное сохранение
     } catch (e) {

@@ -38,7 +38,6 @@ class _mainButtonState extends State<mainButton>
         _status = status;
         _completed = status;
         if (status == AnimationStatus.completed) {
-          print('$_status');
           sleep(Duration(milliseconds: 1000));
           _controller.reverse();
         }
@@ -49,32 +48,21 @@ class _mainButtonState extends State<mainButton>
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        print('button tapped: ${widget.buttonId}');
         switch (widget.buttonId) {
           case 1:
             Navigator.popAndPushNamed(context, '/food_catalog');
           case 2:
-            print('waiter');
-            print('$_status');
-
-            if (_status == AnimationStatus.dismissed) {
-              _controller.forward();
-              print('($_status)');
-            }
-            print('($_status)');
+            Navigator.popAndPushNamed(context, '/food_catalog2');
 
           case 3:
-            print('shisha');
             if (_status == AnimationStatus.dismissed) {
               _controller.forward();
             }
           case 4:
-            print('bill');
             if (_status == AnimationStatus.dismissed) {
               _controller.forward();
             }
           case 5:
-            print('review');
           case 6:
             Navigator.popAndPushNamed(context, '/client_bill');
         }

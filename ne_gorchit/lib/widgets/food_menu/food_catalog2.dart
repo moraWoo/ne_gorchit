@@ -2,20 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ne_gorchit/controller/controller.dart';
 import 'package:ne_gorchit/model/menu.dart';
-import 'package:http/http.dart' as http;
-import 'package:ne_gorchit/services/network_manager.dart';
 import 'package:ne_gorchit/services/sql_service.dart';
 import 'package:ne_gorchit/widgets/food_menu/bottom_bar.dart';
 import 'package:ne_gorchit/widgets/food_item.dart';
-import 'package:ne_gorchit/widgets/name_description.dart';
+import 'package:ne_gorchit/widgets/food_menu/food_card.dart';
 
-class FoodMenu extends StatefulWidget {
-  FoodMenu({
+class FoodMenuNew extends StatefulWidget {
+  FoodMenuNew({
     super.key,
   });
 
   @override
-  State<FoodMenu> createState() => _FoodMenuState();
+  State<FoodMenuNew> createState() => _FoodMenuNewState();
 }
 
 class SetValues {
@@ -24,7 +22,7 @@ class SetValues {
   SetValues(this.value, this.count);
 }
 
-class _FoodMenuState extends State<FoodMenu> {
+class _FoodMenuNewState extends State<FoodMenuNew> {
   bool _visibleOfBottomBar = false;
   int _count = 0;
   final HomePageController controller = Get.put(HomePageController());
@@ -85,7 +83,7 @@ class _FoodMenuState extends State<FoodMenu> {
                 future: sqlService.isTableNotEmpty(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData && snapshot.data == true) {
-                    return FoodItem(
+                    return FoodCard(
                       items: itemsDatum,
                       callback: (val, count) {
                         setState(() {
