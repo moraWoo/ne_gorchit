@@ -42,6 +42,7 @@ class Datum with CountMixin {
     required this.idTable,
     required this.fav,
     required this.rating,
+    this.countOfItems = 0,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
