@@ -105,12 +105,6 @@ class HomePageController extends GetxController {
     }
   }
 
-  Future eraseCart() async {
-    itemServices.eraseCart();
-    cartItems.remove;
-    update();
-  }
-
   Future addToCart(Datum item) async {
     isLoading = true;
     update();

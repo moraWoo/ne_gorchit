@@ -86,12 +86,6 @@ class _CardItemWidgetState extends State<CardItemWidget> {
   final HomePageController controller = Get.put(HomePageController());
 
   @override
-  void initState() {
-    super.initState();
-    print('items: ${widget.item.name}');
-  }
-
-  @override
   Widget build(BuildContext context) {
     print('showButtons1: ${widget.showButtons}');
 
@@ -122,100 +116,99 @@ class _CardItemWidgetState extends State<CardItemWidget> {
             children: [
               Image.network(resultUrl),
               nameAndDescriptionFoodItem(item: widget.item),
-              if (widget.showButtons)
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            if (widget.item.countOfItems > 0) {
-                              widget.item.countOfItems--;
-                              controller.removeFromCart(
-                                  widget.item, widget.item.id);
-                            }
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+              (widget.item.countOfItems > 0)
+                  ? Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                if (widget.item.countOfItems > 0) {
+                                  widget.item.countOfItems--;
+                                  controller.removeFromCart(
+                                      widget.item, widget.item.id);
+                                }
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                minimumSize: Size(60, 60),
+                                backgroundColor: Color.fromRGBO(66, 67, 64, 1)),
+                            child: Text(
+                              '-',
+                              style: TextStyle(
+                                fontSize: 18,
+                              ),
                             ),
-                            minimumSize: Size(60, 60),
-                            backgroundColor: Color.fromRGBO(66, 67, 64, 1)),
-                        child: Text(
-                          '-',
-                          style: TextStyle(
-                            fontSize: 18,
                           ),
-                        ),
+                          SizedBox(width: 40),
+                          Text(
+                            (widget.item.countOfItems).toString(),
+                            style: TextStyle(
+                              fontSize: 25,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(width: 40),
+                          Text(
+                            (widget.item.price * widget.item.countOfItems)
+                                .toString(),
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(width: 30),
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                widget.item.countOfItems += 1;
+                                controller.addToCart(widget.item);
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                minimumSize: Size(60, 60),
+                                backgroundColor: Color.fromRGBO(66, 67, 64, 1)),
+                            child: Text(
+                              '+',
+                              style: TextStyle(
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 40),
-                      Text(
-                        (widget.item.countOfItems).toString(),
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(width: 40),
-                      Text(
-                        (widget.item.price * widget.item.countOfItems)
-                            .toString(),
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(width: 30),
-                      ElevatedButton(
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            widget.item.countOfItems += 1;
+                            // widget.showButtons = true;
+                            widget.item.countOfItems = 1;
                             controller.addToCart(widget.item);
                           });
                         },
-                        style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            minimumSize: Size(60, 60),
-                            backgroundColor: Color.fromRGBO(66, 67, 64, 1)),
                         child: Text(
-                          '+',
-                          style: TextStyle(
-                            fontSize: 18,
+                          widget.item.price.toString(),
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
+                          minimumSize: Size(190, 60),
+                          backgroundColor: Color.fromRGBO(66, 67, 64, 1),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              if (!widget.showButtons)
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        // widget.showButtons = true;
-                        widget.item.countOfItems = 1;
-                        controller.addToCart(widget.item);
-                      });
-                    },
-                    child: Text(
-                      widget.item.price.toString(),
-                      style: TextStyle(fontSize: 18),
                     ),
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      minimumSize: Size(190, 60),
-                      backgroundColor: Color.fromRGBO(66, 67, 64, 1),
-                    ),
-                  ),
-                ),
             ],
           ),
         ),

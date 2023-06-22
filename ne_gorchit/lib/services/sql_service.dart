@@ -152,17 +152,29 @@ class SQLService {
     try {
       await openDB(); // Открываем базу данных, если она еще не открыта
       await db?.transaction((txn) async {
-        var selectQry = 'SELECT * FROM cart_list WHERE id = ${item.id}';
-        var result = await txn.rawQuery(selectQry);
-        if (result.isNotEmpty) {
-          var updateQry =
+        var selectQryCart = 'SELECT * FROM cart_list WHERE id = ${item.id}';
+        var selectQryMenu = 'SELECT * FROM menu_items WHERE id = ${item.id}';
+
+        var resultCart = await txn.rawQuery(selectQryCart);
+        var resultMenu = await txn.rawQuery(selectQryMenu);
+
+        if (resultCart.isNotEmpty) {
+          var updateQryCart =
               'UPDATE cart_list SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
-          await txn.rawUpdate(updateQry);
+          await txn.rawUpdate(updateQryCart);
+          var updateQryMenu =
+              'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
+          await txn.rawUpdate(updateQryMenu);
+
           print('countOfItems updated in cart for item with id ${item.id}');
         } else {
-          var insertQry =
+          var insertQryCart =
               'INSERT INTO cart_list(name, image, price, fav, rating, description, idTable, countOfItems) VALUES("${item.name}", "${item.image}", "${item.price}", "${item.fav}", "${item.rating}", "${item.description}", "${item.idTable}", ${item.countOfItems})';
-          await txn.rawInsert(insertQry);
+          await txn.rawInsert(insertQryCart);
+
+          var updateQryMenu =
+              'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
+          await txn.rawUpdate(updateQryMenu);
           print('item inserted into cart with id ${item.id}');
         }
       });
@@ -177,17 +189,27 @@ class SQLService {
     try {
       await openDB(); // Открываем базу данных, если она еще не открыта
       await db?.transaction((txn) async {
-        var selectQry = 'SELECT * FROM cart_list WHERE id = ${item.id}';
-        var result = await txn.rawQuery(selectQry);
+        var selectQryCart = 'SELECT * FROM cart_list WHERE id = ${item.id}';
+        var selectQryMenu = 'SELECT * FROM menu_items WHERE id = ${item.id}';
+
+        var result = await txn.rawQuery(selectQryCart);
+        var resultMenu = await txn.rawQuery(selectQryMenu);
+
         if (result.isNotEmpty) {
           if (item.countOfItems == 0) {
-            var deleteQry = 'DELETE FROM cart_list WHERE id = ${item.id}';
-            await txn.rawDelete(deleteQry);
+            var deleteQryCart = 'DELETE FROM cart_list WHERE id = ${item.id}';
+            await txn.rawDelete(deleteQryCart);
+            var updateQryMenu =
+                'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
+            await txn.rawUpdate(updateQryMenu);
             print('item deleted from cart with id ${item.id}');
           } else {
-            var updateQry =
+            var updateQryCart =
                 'UPDATE cart_list SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
-            await txn.rawUpdate(updateQry);
+            await txn.rawUpdate(updateQryCart);
+            var updateQryMenu =
+                'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
+            await txn.rawUpdate(updateQryMenu);
             print('countOfItems updated in cart for item with id ${item.id}');
           }
         } else {
@@ -197,12 +219,6 @@ class SQLService {
     } catch (e) {
       print("ERROR IN SAVE DATA TO DB: $e");
     }
-  }
-
-// Метод для удаления содержимого таблицы cart_list при выполнении команды Заказать в экране Корзина
-  Future eraseCart() async {
-    var qry = "DELETE FROM cart_list";
-    return await this.db?.rawDelete(qry);
   }
 
   Future<bool> isTableNotEmpty() async {

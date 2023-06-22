@@ -101,10 +101,6 @@ class ItemServices {
     return await sqlService.removeFromCart(item, item.id);
   }
 
-  eraseCart() async {
-    return await sqlService.eraseCart();
-  }
-
   Future<bool> checkIfUnique(Datum item) async {
     List<Datum> existingItems = await sqlService.getItemsRecord();
     for (Datum existingItem in existingItems) {
