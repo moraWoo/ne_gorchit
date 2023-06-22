@@ -151,7 +151,15 @@ class _CardItemWidgetState extends State<CardItemWidget> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 70),
+                      SizedBox(width: 40),
+                      Text(
+                        (widget.item.countOfItems).toString(),
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(width: 40),
                       Text(
                         (widget.item.price * widget.item.countOfItems)
                             .toString(),
@@ -160,7 +168,7 @@ class _CardItemWidgetState extends State<CardItemWidget> {
                           color: Colors.white,
                         ),
                       ),
-                      SizedBox(width: 70),
+                      SizedBox(width: 30),
                       ElevatedButton(
                         onPressed: () {
                           setState(() {
