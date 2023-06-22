@@ -35,6 +35,7 @@ class _FoodMenuNewState extends State<FoodMenuNew> {
     super.initState();
     controller.loadDB();
     itemsDatum = controller.items;
+
     controller.getShoppingData().then((data) {
       setState(() {
         itemsDatum = data;

@@ -24,27 +24,36 @@ class ListOfFoodCard extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  @override
+  Future<bool> getShowButtons(Datum item) async {
+    return await controller.isAlreadyInCart(item.id);
+  }
+
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: items.length,
       itemBuilder: (context, index) {
         var item = items[index];
         var resultUrl = imgUrl;
-        return CardItemWidget(
-          item: item,
-          imgUrl: resultUrl,
-          onPressedMinus: () {
-            print('onPressedMinus');
-            controller.removeFromCart(item.id);
-            // Обработчик нажатия на кнопку "-"
-            // Здесь можно выполнить соответствующие действия
-          },
-          onPressedPlus: () {
-            print('onPressedPlus');
-            controller.addToCart(item);
-            // Обработчик нажатия на кнопку "+"
-            // Здесь можно выполнить соответствующие действия
+        print(
+            'items $index: ${items[index].name} ${items[index].countOfItems}');
+        return FutureBuilder<bool>(
+          future: controller.isAlreadyInCart(item.id),
+          builder: (context, snapshot) {
+            bool showButtons = snapshot.data ?? false;
+
+            return CardItemWidget(
+              item: item,
+              imgUrl: resultUrl,
+              onPressedMinus: () {
+                print('onPressedMinus');
+                // controller.removeFromCart(item.id);
+              },
+              onPressedPlus: () {
+                print('onPressedPlus');
+                // controller.addToCart(item);
+              },
+              showButtons: showButtons,
+            );
           },
         );
       },
@@ -52,84 +61,16 @@ class ListOfFoodCard extends StatelessWidget {
   }
 }
 
-// class CardItemWidget extends StatelessWidget {
-//   final Datum item;
-//   final String imgUrl;
-//   final Function onPressedMinus;
-//   final Function onPressedPlus;
-
-//   CardItemWidget({
-//     required this.item,
-//     required this.imgUrl,
-//     required this.onPressedMinus,
-//     required this.onPressedPlus,
-//     Key? key,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     var resultUrl = imgUrl + item.image;
-//     return Padding(
-//       padding: EdgeInsets.all(20.0),
-//       child: DecoratedBox(
-//         decoration: BoxDecoration(
-//           color: Color.fromRGBO(48, 47, 45, 1),
-//           border: Border.all(
-//             color: Colors.black.withOpacity(0.2),
-//           ),
-//           borderRadius: const BorderRadius.all(
-//             Radius.circular(20),
-//           ),
-//           boxShadow: [
-//             BoxShadow(
-//               color: Colors.black.withOpacity(0.3),
-//               blurRadius: 8,
-//               offset: Offset(0, 10),
-//             ),
-//           ],
-//         ),
-//         child: ClipRRect(
-//           borderRadius: BorderRadius.all(Radius.circular(20)),
-//           clipBehavior: Clip.hardEdge,
-//           child: Column(
-//             children: [
-//               Image.network(resultUrl),
-//               nameAndDescriptionFoodItem(item: item),
-//               Padding(
-//                 padding: const EdgeInsets.all(15.0),
-//                 child: ElevatedButton(
-//                   onPressed: () => onPressedMinus(),
-//                   child: Text(
-//                     item.price.toString(),
-//                     style: TextStyle(
-//                       fontSize: 18,
-//                     ),
-//                   ),
-//                   style: ElevatedButton.styleFrom(
-//                     shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.circular(20.0),
-//                     ),
-//                     minimumSize: Size(190, 60),
-//                     backgroundColor: Color.fromRGBO(66, 67, 64, 1),
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 class CardItemWidget extends StatefulWidget {
   final Datum item;
   final String imgUrl;
   final Function onPressedMinus;
   final Function onPressedPlus;
+  bool showButtons;
 
   CardItemWidget({
     required this.item,
+    required this.showButtons,
     required this.imgUrl,
     required this.onPressedMinus,
     required this.onPressedPlus,
@@ -141,11 +82,19 @@ class CardItemWidget extends StatefulWidget {
 }
 
 class _CardItemWidgetState extends State<CardItemWidget> {
-  bool showButtons = false;
   int counter = 0;
+  final HomePageController controller = Get.put(HomePageController());
+
+  @override
+  void initState() {
+    super.initState();
+    print('items: ${widget.item.name}');
+  }
 
   @override
   Widget build(BuildContext context) {
+    print('showButtons1: ${widget.showButtons}');
+
     var resultUrl = widget.imgUrl + widget.item.image;
     return Padding(
       padding: EdgeInsets.all(20.0),
@@ -173,7 +122,7 @@ class _CardItemWidgetState extends State<CardItemWidget> {
             children: [
               Image.network(resultUrl),
               nameAndDescriptionFoodItem(item: widget.item),
-              if (showButtons)
+              if (widget.showButtons)
                 Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Row(
@@ -182,8 +131,10 @@ class _CardItemWidgetState extends State<CardItemWidget> {
                       ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            if (counter > 0) {
-                              counter--;
+                            if (widget.item.countOfItems > 0) {
+                              widget.item.countOfItems--;
+                              controller.removeFromCart(
+                                  widget.item, widget.item.id);
                             }
                           });
                         },
@@ -202,15 +153,19 @@ class _CardItemWidgetState extends State<CardItemWidget> {
                       ),
                       SizedBox(width: 70),
                       Text(
-                        // counter.toString(),
-                        (widget.item.price * counter).toString(),
-                        style: TextStyle(fontSize: 18),
+                        (widget.item.price * widget.item.countOfItems)
+                            .toString(),
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
                       ),
                       SizedBox(width: 70),
                       ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            counter++;
+                            widget.item.countOfItems += 1;
+                            controller.addToCart(widget.item);
                           });
                         },
                         style: ElevatedButton.styleFrom(
@@ -229,14 +184,15 @@ class _CardItemWidgetState extends State<CardItemWidget> {
                     ],
                   ),
                 ),
-              if (!showButtons)
+              if (!widget.showButtons)
                 Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        showButtons = true;
-                        counter = 1;
+                        // widget.showButtons = true;
+                        widget.item.countOfItems = 1;
+                        controller.addToCart(widget.item);
                       });
                     },
                     child: Text(

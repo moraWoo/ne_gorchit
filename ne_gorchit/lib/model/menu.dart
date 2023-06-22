@@ -22,7 +22,7 @@ class Menu {
       };
 }
 
-class Datum {
+class Datum with CountMixin {
   String description;
   int id;
   String image;
@@ -31,6 +31,7 @@ class Datum {
   int idTable;
   int fav;
   double rating;
+  int countOfItems = 0;
 
   Datum({
     required this.description,
@@ -66,4 +67,8 @@ class Datum {
         "fav": fav,
         "rating": rating,
       };
+}
+
+mixin CountMixin {
+  late int countOfItems;
 }

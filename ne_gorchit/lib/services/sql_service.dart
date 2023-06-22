@@ -136,6 +136,7 @@ class SQLService {
           "rating REAL,"
           "description TEXT,"
           "idTable INTEGER,"
+          "countOfItems INTEGER,"
           "datetime DATETIME)";
 
       await db?.execute(qry);
@@ -171,18 +172,54 @@ class SQLService {
   }
 
   Future addToCart(Datum item) async {
-    await this.db?.transaction((txn) async {
-      var qry =
-          'INSERT INTO cart_list(name, image, price, fav, rating, description, idTable, ) VALUES("${item.name}", "${item.image}", "${item.price}", "${item.fav}", "${item.rating}", "${item.description}", "${item.idTable}")';
-      int id1 = await txn.rawInsert(qry);
-      print('item saved in cart');
-      return id1;
-    });
+    try {
+      await openDB(); // Открываем базу данных, если она еще не открыта
+      await db?.transaction((txn) async {
+        var selectQry = 'SELECT * FROM cart_list WHERE id = ${item.id}';
+        var result = await txn.rawQuery(selectQry);
+        if (result.isNotEmpty) {
+          var updateQry =
+              'UPDATE cart_list SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
+          await txn.rawUpdate(updateQry);
+          print('countOfItems updated in cart for item with id ${item.id}');
+        } else {
+          var insertQry =
+              'INSERT INTO cart_list(name, image, price, fav, rating, description, idTable, countOfItems) VALUES("${item.name}", "${item.image}", "${item.price}", "${item.fav}", "${item.rating}", "${item.description}", "${item.idTable}", ${item.countOfItems})';
+          await txn.rawInsert(insertQry);
+          print('item inserted into cart with id ${item.id}');
+        }
+      });
+    } catch (e) {
+      print("ERROR IN SAVE DATA TO DB: $e");
+    }
+
+    await this.db?.transaction((txn) async {});
   }
 
-  Future removeFromCart(int id) async {
-    var qry = "DELETE FROM cart_list where id = ${id}";
-    return await this.db?.rawDelete(qry);
+  Future removeFromCart(Datum item, int id) async {
+    try {
+      await openDB(); // Открываем базу данных, если она еще не открыта
+      await db?.transaction((txn) async {
+        var selectQry = 'SELECT * FROM cart_list WHERE id = ${item.id}';
+        var result = await txn.rawQuery(selectQry);
+        if (result.isNotEmpty) {
+          if (item.countOfItems == 0) {
+            var deleteQry = 'DELETE FROM cart_list WHERE id = ${item.id}';
+            await txn.rawDelete(deleteQry);
+            print('item deleted from cart with id ${item.id}');
+          } else {
+            var updateQry =
+                'UPDATE cart_list SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
+            await txn.rawUpdate(updateQry);
+            print('countOfItems updated in cart for item with id ${item.id}');
+          }
+        } else {
+          print('item not found in cart with id ${item.id}');
+        }
+      });
+    } catch (e) {
+      print("ERROR IN SAVE DATA TO DB: $e");
+    }
   }
 
 // Метод для удаления содержимого таблицы cart_list при выполнении команды Заказать в экране Корзина

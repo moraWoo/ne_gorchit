@@ -90,15 +90,15 @@ class ItemServices {
 
   Future addToCart(Datum item) async {
     print('addtocart itemservice: ${item.name}');
-    return await sqlService.saveDataToCartDB(item);
+    return await sqlService.addToCart(item);
   }
 
   Future getCartList() async {
     return await sqlService.getCartList();
   }
 
-  removeFromCart(int id) async {
-    return await sqlService.removeFromCart(id);
+  removeFromCart(Datum item, int id) async {
+    return await sqlService.removeFromCart(item, item.id);
   }
 
   eraseCart() async {

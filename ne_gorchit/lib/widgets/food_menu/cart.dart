@@ -58,7 +58,7 @@ class CartPage extends StatelessWidget {
                                   child: InkResponse(
                                     onTap: () {
                                       Get.find<HomePageController>()
-                                          .removeFromCart(datum.id);
+                                          .removeFromCart(datum, datum.id);
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         SnackBar(

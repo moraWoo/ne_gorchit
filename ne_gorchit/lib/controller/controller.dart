@@ -11,25 +11,47 @@ class HomePageController extends GetxController {
   bool isLoading = true;
   SQLService sqlService = SQLService();
 
+  List<Datum> cartList = [];
+
   @override
   void onInit() {
-    // TODO: implement onInit
     super.onInit();
     loadDB();
+  }
+
+  Future<bool> isAlreadyInCart(int id) async {
+    try {
+      List<Map<String, dynamic>> cartList = await sqlService.getShoppingData();
+      List<Datum> newData = [];
+
+      for (var item in cartList) {
+        newData.add(Datum(
+          name: item['name'],
+          description: item['description'],
+          id: item['id'],
+          image: item['image'],
+          price: item['price'],
+          idTable: item['idTable'],
+          fav: item['fav'],
+          rating: item['rating'],
+        ));
+      }
+
+      for (var datum in newData) {
+        if (datum.id == id) {
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   loadDB() async {
     await sqlService.openDB(); // Открываем базу данных
   }
-
-  // Future<<List<Menu>> getShoppingData() async {
-  //   items = await sqlService.getShoppingData();
-  // return items;
-  // }
-
-  // Future<List<Map<String, dynamic>>> getShoppingData() async {
-  //   return sqlService.getShoppingData();
-  // }
 
   Future<List<Datum>> getShoppingData() async {
     try {
@@ -47,6 +69,7 @@ class HomePageController extends GetxController {
           idTable: item['idTable'],
           fav: item['fav'],
           rating: item['rating'],
+          // countOfItems: item['countOfItems'],
         ));
       }
 
@@ -57,100 +80,29 @@ class HomePageController extends GetxController {
     }
   }
 
-  // Future<void> getShoppingData() async {
-  //   try {
-  //     List<Map<String, dynamic>> shoppingData =
-  //         await sqlService.getShoppingData();
+  Future<List<Datum>> getCartData() async {
+    try {
+      List<Map<String, dynamic>> cartData = await sqlService.getCartData();
+      List<Datum> cartDataList = [];
 
-  //     for (var item in shoppingData) {
-  //       items.add(Datum(
-  //         name: item['name'],
-  //         description: item['description'],
-  //         id: item['id'],
-  //         image: item['image'],
-  //         price: item['price'],
-  //         idTable: item['idTable'],
-  //         fav: item['fav'],
-  //         rating: item['rating'],
-  //       ));
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
-
-  // Menu? getItem(int id) {
-  //   for (var menu in items) {
-  //     for (var datum in menu) {
-  //       if (datum.id == id) {
-  //         return menu;
-  //       }
-  //     }
-  //   }
-  //   return null; // Если элемент с заданным id не найден
-  // }
-
-  bool isAlreadyInCart(int id) {
-    for (var datum in cartItems) {
-      if (datum.id == id) {
-        return true;
+      for (var item in cartData) {
+        cartDataList.add(Datum(
+          name: item['name'],
+          description: item['description'],
+          id: item['id'],
+          image: item['image'],
+          price: item['price'],
+          idTable: item['idTable'],
+          fav: item['fav'],
+          rating: item['rating'],
+        ));
       }
+      return cartDataList; // Вернуть преобразованный список
+    } catch (e) {
+      print(e);
+      return []; // Вернуть пустой список в случае ошибки
     }
-    return false;
   }
-
-  // getCardList() async {
-  //   try {
-  //     List list = await itemServices.getCartList();
-  //     cartItems.clear();
-  //     list.forEach((element) {
-  //       Menu menu = Menu.fromJson(element);
-  //       cartItems.addAll(menu.data as Iterable<Menu>);
-  //     });
-  //     update();
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
-
-  // loadItems() async {
-  //   try {
-  //     isLoading = true;
-  //     update();
-  //     print('loadItems');
-
-  //     List list = await itemServices.loadItems();
-  //     print('list: $list');
-
-  //     items.clear();
-  //     list.forEach((element) {
-  //       Menu menu = Menu.fromJson(element);
-  //       items.add(menu);
-  //     });
-
-  //     isLoading = false;
-  //     update();
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
-
-  // setToFav(int id, int flag) async {
-  //   for (var menu in items) {
-  //     for (var datum in menu.data) {
-  //       if (datum.id == id) {
-  //         datum.fav = flag;
-  //         update();
-  //         try {
-  //           await itemServices.setItemAsFavourite(id, flag);
-  //         } catch (e) {
-  //           print(e);
-  //         }
-  //         return;
-  //       }
-  //     }
-  //   }
-  // }
 
   Future eraseCart() async {
     itemServices.eraseCart();
@@ -167,15 +119,8 @@ class HomePageController extends GetxController {
     return result;
   }
 
-  // removeFromCart(int id) async {
-  //   itemServices.removeFromCart(id);
-  //   if (id > -1) {
-  //     cartItems.removeAt(id);
-  //   }
-  //   update();
-  // }
-  removeFromCart(int id) async {
-    await itemServices.removeFromCart(id);
+  removeFromCart(Datum item, int id) async {
+    await itemServices.removeFromCart(item, item.id);
     Datum removedItem;
 
     for (var item in cartItems) {
@@ -184,11 +129,6 @@ class HomePageController extends GetxController {
         break;
       }
     }
-
-    // if (removedItem != null) {
-    //   cartItems.remove(removedItem);
-    // }
-
     update();
   }
 }
