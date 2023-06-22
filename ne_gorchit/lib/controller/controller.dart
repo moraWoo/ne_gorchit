@@ -55,7 +55,8 @@ class HomePageController extends GetxController {
 
   Future<List<Datum>> getShoppingData() async {
     try {
-      List<Map<String, dynamic>> shoppingData = await sqlService.getCartData();
+      List<Map<String, dynamic>> shoppingData =
+          await sqlService.getShoppingData();
       List<Datum> newData = [];
 
       for (var item in shoppingData) {
@@ -94,6 +95,7 @@ class HomePageController extends GetxController {
           idTable: item['idTable'],
           fav: item['fav'],
           rating: item['rating'],
+          countOfItems: item['countOfItems'],
         ));
       }
       return cartDataList; // Вернуть преобразованный список

@@ -76,7 +76,7 @@ class SQLService {
             for (var menu in data) {
               for (var datum in menu.data) {
                 var qry =
-                    'INSERT INTO menu_items(name, image, price, fav, rating, description, idTable) VALUES("${datum.name}", "${datum.image}", ${datum.price}, ${datum.fav}, ${datum.rating}, "${datum.description}", ${datum.idTable})';
+                    'INSERT INTO menu_items(name, image, price, fav, rating, description, idTable, countOfItems) VALUES("${datum.name}", "${datum.image}", ${datum.price}, ${datum.fav}, ${datum.rating}, "${datum.description}", ${datum.idTable}, ${datum.countOfItems})';
                 await txn.rawInsert(qry);
               }
             }
@@ -93,19 +93,6 @@ class SQLService {
   Future<List<Map<String, dynamic>>> getCartData() async {
     final db = await openDB();
     return await db?.query(_tableNameCart) ?? [];
-  }
-
-  Future<void> saveDataToCartDB(Datum item) async {
-    try {
-      await openDB(); // Открываем базу данных, если она еще не открыта
-      await db?.transaction((txn) async {
-        var qry =
-            'INSERT INTO cart_list(name, image, price, fav, rating, description, idTable) VALUES("${item.name}", "${item.image}", "${item.price}", "${item.fav}", "${item.rating}", "${item.description}", "${item.idTable}")';
-        await txn.rawInsert(qry);
-      });
-    } catch (e) {
-      print("ERROR IN SAVE DATA TO DB: $e");
-    }
   }
 
   Future<bool> checkDBExistence() async {
@@ -125,6 +112,7 @@ class SQLService {
           "rating REAL,"
           "description TEXT,"
           "idTable INTEGER,"
+          "countOfItems INTEGER,"
           "datetime DATETIME)";
       await db?.execute(qry);
       qry = "CREATE TABLE IF NOT EXISTS cart_list ( "
@@ -144,17 +132,6 @@ class SQLService {
       print("ERROR IN CREATE TABLE");
       print(e);
     }
-  }
-
-  Future saveRecord(Menu menu) async {
-    await this.db?.transaction((txn) async {
-      for (var datum in menu.data) {
-        var qry =
-            'INSERT INTO menu_items(name, image, price, fav, rating, description, idTable) VALUES("${datum.name}", "${datum.image}", ${datum.price}, ${datum.fav}, ${datum.rating}, "${datum.description}", ${datum.idTable})';
-        int id1 = await txn.rawInsert(qry);
-        return id1;
-      }
-    });
   }
 
   Future setItemAsFavourite(int id, int flag) async {
