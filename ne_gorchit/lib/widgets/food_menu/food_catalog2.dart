@@ -44,6 +44,7 @@ class _FoodMenuNewState extends State<FoodMenuNew> {
   }
 
   set visibleOfBottomBar(SetValues values) => setState(() {
+        print('values: $values');
         _visibleOfBottomBar = values.value;
         _count = countFromDB;
       });
@@ -51,6 +52,7 @@ class _FoodMenuNewState extends State<FoodMenuNew> {
   @override
   Widget build(BuildContext context) {
     Get.put(HomePageController()).getShoppingData();
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -84,23 +86,17 @@ class _FoodMenuNewState extends State<FoodMenuNew> {
                 future: sqlService.isTableNotEmpty(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData && snapshot.data == true) {
+                    print('first ');
+
                     return ListOfFoodCard(
                       items: itemsDatum,
-                      callback: (val, count) {
-                        setState(() {
-                          _visibleOfBottomBar = val;
-                          _count = count;
-                        });
-                      },
                       count: _count,
                     );
                   } else {
+                    print('second ');
+
                     return ListOfFoodCard(
                       items: itemsDatum,
-                      callback: (val, count) => setState(() {
-                        _visibleOfBottomBar = val;
-                        _count = itemsDatum.length;
-                      }),
                       count: itemsDatum.length,
                     );
                   }
@@ -112,9 +108,11 @@ class _FoodMenuNewState extends State<FoodMenuNew> {
           }
         },
       ),
-      bottomNavigationBar: Visibility(
-        visible: _visibleOfBottomBar || itemsDatum.isNotEmpty,
-        child: bottomWidget(count: _count),
+      bottomNavigationBar: Obx(
+        () => Visibility(
+          visible: controller.showingBottomWidget.value,
+          child: bottomWidget(count: _count),
+        ),
       ),
     );
   }

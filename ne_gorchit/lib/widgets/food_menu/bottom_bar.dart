@@ -81,8 +81,12 @@ class _bottomWidgetState extends State<bottomWidget> {
                       'Заказ',
                       style: TextStyle(color: Colors.black, fontSize: 20),
                     ),
+                    // Obx(() => Text(
+                    //       '${controller.sumOfPriceInCart()}',
+                    //       style: TextStyle(color: Colors.black, fontSize: 5),
+                    //     ))
                     Text(
-                      getItemTotal(controller.cartItems),
+                      '0.0',
                       style: TextStyle(color: Colors.black),
                     ),
                   ],

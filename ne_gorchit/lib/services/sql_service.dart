@@ -57,9 +57,7 @@ class SQLService {
         for (var datum in menu.data) {
           bool alreadyExists = false;
           for (var dataItem in existingData) {
-            // Изменено имя переменной на dataItem
             if (dataItem['id'] == datum.id) {
-              // Изменено имя переменной на dataItem
               alreadyExists = true;
               break;
             }
@@ -148,12 +146,49 @@ class SQLService {
     }
   }
 
+  // Future addToCart(Datum item) async {
+  //   try {
+  //     await openDB(); // Открываем базу данных, если она еще не открыта
+  //     await db?.transaction((txn) async {
+  //       var selectQryCart = 'SELECT * FROM cart_list WHERE id = ${item.id}';
+  //       var selectQryMenu = 'SELECT * FROM menu_items WHERE id = ${item.id}';
+
+  //       var resultCart = await txn.rawQuery(selectQryCart);
+  //       var resultMenu = await txn.rawQuery(selectQryMenu);
+
+  //       if (resultCart.isNotEmpty) {
+  //         var updateQryCart =
+  //             'UPDATE cart_list SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
+  //         await txn.rawUpdate(updateQryCart);
+  //         var updateQryMenu =
+  //             'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
+  //         await txn.rawUpdate(updateQryMenu);
+
+  //         print('countOfItems updated in cart for item with id ${item.id}');
+  //       } else {
+  //         var insertQryCart =
+  //             'INSERT INTO cart_list(name, image, price, fav, rating, description, idTable, countOfItems) VALUES("${item.name}", "${item.image}", "${item.price}", "${item.fav}", "${item.rating}", "${item.description}", "${item.idTable}", ${item.countOfItems})';
+  //         await txn.rawInsert(insertQryCart);
+
+  //         var updateQryMenu =
+  //             'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
+  //         await txn.rawUpdate(updateQryMenu);
+  //         print('item inserted into cart with id ${item.id}');
+  //       }
+  //     });
+  //   } catch (e) {
+  //     print("ERROR IN SAVE DATA TO DB: $e");
+  //   }
+
+  //   await this.db?.transaction((txn) async {});
+  // }
+
   Future addToCart(Datum item) async {
     try {
       await openDB(); // Открываем базу данных, если она еще не открыта
       await db?.transaction((txn) async {
-        var selectQryCart = 'SELECT * FROM cart_list WHERE id = ${item.id}';
-        var selectQryMenu = 'SELECT * FROM menu_items WHERE id = ${item.id}';
+        var selectQryCart = 'SELECT id FROM cart_list WHERE id = ${item.id}';
+        var selectQryMenu = 'SELECT id FROM menu_items WHERE id = ${item.id}';
 
         var resultCart = await txn.rawQuery(selectQryCart);
         var resultMenu = await txn.rawQuery(selectQryMenu);

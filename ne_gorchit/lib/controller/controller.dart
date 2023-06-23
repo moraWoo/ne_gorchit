@@ -10,6 +10,8 @@ class HomePageController extends GetxController {
   List<Datum> cartItems = [];
   bool isLoading = true;
   SQLService sqlService = SQLService();
+  RxBool showingBottomWidget = false.obs;
+  RxDouble sumOfCart = 0.0.obs;
 
   List<Datum> cartList = [];
 
@@ -21,7 +23,7 @@ class HomePageController extends GetxController {
 
   Future<bool> isAlreadyInCart(int id) async {
     try {
-      List<Map<String, dynamic>> cartList = await sqlService.getShoppingData();
+      List<Map<String, dynamic>> cartList = await sqlService.getCartData();
       List<Datum> newData = [];
 
       for (var item in cartList) {
@@ -34,17 +36,23 @@ class HomePageController extends GetxController {
           idTable: item['idTable'],
           fav: item['fav'],
           rating: item['rating'],
+          countOfItems: item['countOfItems'],
         ));
       }
 
       for (var datum in newData) {
         if (datum.id == id) {
+          showingBottomWidget.value = true;
+          print('showingBottomWidget.value: ${showingBottomWidget.value}');
           return true;
         }
       }
+      showingBottomWidget.value = false; // Сбрасываем значение, если не найдено
       return false;
     } catch (e) {
       print(e);
+      showingBottomWidget.value =
+          false; // Обрабатываем ошибку и сбрасываем значение
       return false;
     }
   }

@@ -8,18 +8,18 @@ import 'package:ne_gorchit/services/sql_service.dart';
 import 'package:ne_gorchit/widgets/food_menu/bottom_bar.dart';
 import 'package:ne_gorchit/widgets/name_description.dart';
 
-typedef void BottomVisibleCallBack(bool val, int count);
+// typedef void BottomVisibleCallBack(bool val, int count);
 
 class ListOfFoodCard extends StatelessWidget {
   final List<Datum> items;
-  final BottomVisibleCallBack callback;
+  // final BottomVisibleCallBack callback;
   final int count;
   var imgUrl = 'http://localhost:4000/';
   final HomePageController controller = Get.put(HomePageController());
 
   ListOfFoodCard({
     required this.items,
-    required this.callback,
+    // required this.callback,
     required this.count,
     Key? key,
   }) : super(key: key);
@@ -191,7 +191,6 @@ class _CardItemWidgetState extends State<CardItemWidget> {
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            // widget.showButtons = true;
                             widget.item.countOfItems = 1;
                             controller.addToCart(widget.item);
                           });
