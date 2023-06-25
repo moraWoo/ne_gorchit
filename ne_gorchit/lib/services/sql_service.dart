@@ -146,43 +146,6 @@ class SQLService {
     }
   }
 
-  // Future addToCart(Datum item) async {
-  //   try {
-  //     await openDB(); // Открываем базу данных, если она еще не открыта
-  //     await db?.transaction((txn) async {
-  //       var selectQryCart = 'SELECT * FROM cart_list WHERE id = ${item.id}';
-  //       var selectQryMenu = 'SELECT * FROM menu_items WHERE id = ${item.id}';
-
-  //       var resultCart = await txn.rawQuery(selectQryCart);
-  //       var resultMenu = await txn.rawQuery(selectQryMenu);
-
-  //       if (resultCart.isNotEmpty) {
-  //         var updateQryCart =
-  //             'UPDATE cart_list SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
-  //         await txn.rawUpdate(updateQryCart);
-  //         var updateQryMenu =
-  //             'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
-  //         await txn.rawUpdate(updateQryMenu);
-
-  //         print('countOfItems updated in cart for item with id ${item.id}');
-  //       } else {
-  //         var insertQryCart =
-  //             'INSERT INTO cart_list(name, image, price, fav, rating, description, idTable, countOfItems) VALUES("${item.name}", "${item.image}", "${item.price}", "${item.fav}", "${item.rating}", "${item.description}", "${item.idTable}", ${item.countOfItems})';
-  //         await txn.rawInsert(insertQryCart);
-
-  //         var updateQryMenu =
-  //             'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
-  //         await txn.rawUpdate(updateQryMenu);
-  //         print('item inserted into cart with id ${item.id}');
-  //       }
-  //     });
-  //   } catch (e) {
-  //     print("ERROR IN SAVE DATA TO DB: $e");
-  //   }
-
-  //   await this.db?.transaction((txn) async {});
-  // }
-
   Future addToCart(Datum item) async {
     try {
       await openDB(); // Открываем базу данных, если она еще не открыта
@@ -220,6 +183,41 @@ class SQLService {
     await this.db?.transaction((txn) async {});
   }
 
+  // Future removeFromCart(Datum item, int id) async {
+  //   try {
+  //     await openDB(); // Открываем базу данных, если она еще не открыта
+  //     await db?.transaction((txn) async {
+  //       var selectQryCart = 'SELECT * FROM cart_list WHERE id = ${item.id}';
+  //       var selectQryMenu = 'SELECT * FROM menu_items WHERE id = ${item.id}';
+
+  //       var result = await txn.rawQuery(selectQryCart);
+  //       var resultMenu = await txn.rawQuery(selectQryMenu);
+
+  //       if (result.isNotEmpty) {
+  //         if (item.countOfItems == 0) {
+  //           var deleteQryCart = 'DELETE FROM cart_list WHERE id = ${item.id}';
+  //           await txn.rawDelete(deleteQryCart);
+  //           var updateQryMenu =
+  //               'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
+  //           await txn.rawUpdate(updateQryMenu);
+  //           print('item deleted from cart with id ${item.id}');
+  //         } else {
+  //           var updateQryCart =
+  //               'UPDATE cart_list SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
+  //           await txn.rawUpdate(updateQryCart);
+  //           var updateQryMenu =
+  //               'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
+  //           await txn.rawUpdate(updateQryMenu);
+  //           print('countOfItems updated in cart for item with id ${item.id}');
+  //         }
+  //       } else {
+  //         print('item not found in cart with id ${item.id}');
+  //       }
+  //     });
+  //   } catch (e) {
+  //     print("ERROR IN SAVE DATA TO DB: $e");
+  //   }
+  // }
   Future removeFromCart(Datum item, int id) async {
     try {
       await openDB(); // Открываем базу данных, если она еще не открыта
@@ -231,21 +229,23 @@ class SQLService {
         var resultMenu = await txn.rawQuery(selectQryMenu);
 
         if (result.isNotEmpty) {
-          if (item.countOfItems == 0) {
-            var deleteQryCart = 'DELETE FROM cart_list WHERE id = ${item.id}';
-            await txn.rawDelete(deleteQryCart);
-            var updateQryMenu =
-                'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
-            await txn.rawUpdate(updateQryMenu);
-            print('item deleted from cart with id ${item.id}');
-          } else {
+          if (item.countOfItems > 0) {
             var updateQryCart =
                 'UPDATE cart_list SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
             await txn.rawUpdate(updateQryCart);
+            print('countOfItems updated in cart for item with id ${item.id}');
+          } else {
+            var deleteQryCart = 'DELETE FROM cart_list WHERE id = ${item.id}';
+            await txn.rawDelete(deleteQryCart);
+            print('item deleted from cart with id ${item.id}');
+          }
+
+          if (resultMenu.isNotEmpty) {
             var updateQryMenu =
                 'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
             await txn.rawUpdate(updateQryMenu);
-            print('countOfItems updated in cart for item with id ${item.id}');
+            print(
+                'countOfItems updated in menu_items for item with id ${item.id}');
           }
         } else {
           print('item not found in cart with id ${item.id}');

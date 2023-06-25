@@ -89,7 +89,6 @@ class ItemServices {
   }
 
   Future addToCart(Datum item) async {
-    print('addtocart itemservice: ${item.name}');
     return await sqlService.addToCart(item);
   }
 

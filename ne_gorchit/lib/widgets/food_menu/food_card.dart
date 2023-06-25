@@ -34,13 +34,10 @@ class ListOfFoodCard extends StatelessWidget {
       itemBuilder: (context, index) {
         var item = items[index];
         var resultUrl = imgUrl;
-        print(
-            'items $index: ${items[index].name} ${items[index].countOfItems}');
         return FutureBuilder<bool>(
           future: controller.isAlreadyInCart(item.id),
           builder: (context, snapshot) {
             bool showButtons = snapshot.data ?? false;
-
             return CardItemWidget(
               item: item,
               imgUrl: resultUrl,
@@ -87,8 +84,6 @@ class _CardItemWidgetState extends State<CardItemWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print('showButtons1: ${widget.showButtons}');
-
     var resultUrl = widget.imgUrl + widget.item.image;
     return Padding(
       padding: EdgeInsets.all(20.0),

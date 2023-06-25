@@ -21,6 +21,33 @@ class HomePageController extends GetxController {
     loadDB();
   }
 
+  Future<void> isAlreadyInCartAll() async {
+    try {
+      List<Map<String, dynamic>> cartList = await sqlService.getCartData();
+      List<Datum> newData = [];
+
+      for (var item in cartList) {
+        newData.add(Datum(
+          name: item['name'],
+          description: item['description'],
+          id: item['id'],
+          image: item['image'],
+          price: item['price'],
+          idTable: item['idTable'],
+          fav: item['fav'],
+          rating: item['rating'],
+          countOfItems: item['countOfItems'],
+        ));
+      }
+
+      (newData.isNotEmpty) ? showingBottomWidget.value = true : null;
+    } catch (e) {
+      print(e);
+      showingBottomWidget.value =
+          false; // Обрабатываем ошибку и сбрасываем значение
+    }
+  }
+
   Future<bool> isAlreadyInCart(int id) async {
     try {
       List<Map<String, dynamic>> cartList = await sqlService.getCartData();
@@ -42,17 +69,17 @@ class HomePageController extends GetxController {
 
       for (var datum in newData) {
         if (datum.id == id) {
-          showingBottomWidget.value = true;
-          print('showingBottomWidget.value: ${showingBottomWidget.value}');
+          // showingBottomWidget.value = true;
           return true;
         }
       }
-      showingBottomWidget.value = false; // Сбрасываем значение, если не найдено
+      // showingBottomWidget.value = false; // Сбрасываем значение, если не найдено
+
       return false;
     } catch (e) {
       print(e);
-      showingBottomWidget.value =
-          false; // Обрабатываем ошибку и сбрасываем значение
+
+      // showingBottomWidget.value = false; // Обрабатываем ошибку и сбрасываем значение
       return false;
     }
   }

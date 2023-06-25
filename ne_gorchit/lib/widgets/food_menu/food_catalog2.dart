@@ -43,11 +43,19 @@ class _FoodMenuNewState extends State<FoodMenuNew> {
     });
   }
 
-  set visibleOfBottomBar(SetValues values) => setState(() {
-        print('values: $values');
-        _visibleOfBottomBar = values.value;
-        _count = countFromDB;
-      });
+  // set visibleOfBottomBar(SetValues values) => setState(() {
+  //       print('values: $values');
+  //       _visibleOfBottomBar = values.value;
+  //       _count = countFromDB;
+  //     });
+
+  // set visibleOfBottomBar(SetValues values) {
+  //   setState(() {
+  //     _visibleOfBottomBar = values.value;
+  //     _count = countFromDB;
+  //     controller.showingBottomWidget.value = values.value; // Update the value
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -86,15 +94,13 @@ class _FoodMenuNewState extends State<FoodMenuNew> {
                 future: sqlService.isTableNotEmpty(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData && snapshot.data == true) {
-                    print('first ');
-
+                    controller.isAlreadyInCartAll();
                     return ListOfFoodCard(
                       items: itemsDatum,
                       count: _count,
                     );
                   } else {
-                    print('second ');
-
+                    controller.isAlreadyInCartAll();
                     return ListOfFoodCard(
                       items: itemsDatum,
                       count: itemsDatum.length,
