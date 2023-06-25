@@ -4,10 +4,11 @@ import 'package:ne_gorchit/controller/controller.dart';
 import 'package:ne_gorchit/model/menu.dart';
 import 'package:ne_gorchit/services/sql_service.dart';
 import 'package:ne_gorchit/widgets/food_menu/bottom_bar.dart';
-import 'package:ne_gorchit/widgets/food_item.dart';
 import 'package:ne_gorchit/widgets/food_menu/food_card.dart';
 
 class FoodMenuNew extends StatefulWidget {
+  final HomePageController controller = Get.put(HomePageController());
+
   FoodMenuNew({
     super.key,
   });
@@ -23,8 +24,7 @@ class SetValues {
 }
 
 class _FoodMenuNewState extends State<FoodMenuNew> {
-  bool _visibleOfBottomBar = false;
-  int _count = 0;
+  final int _count = 0;
   final HomePageController controller = Get.put(HomePageController());
   SQLService sqlService = SQLService();
   int countFromDB = 0;
@@ -35,7 +35,6 @@ class _FoodMenuNewState extends State<FoodMenuNew> {
     super.initState();
     controller.loadDB();
     itemsDatum = controller.items;
-
     controller.getShoppingData().then((data) {
       setState(() {
         itemsDatum = data;
@@ -43,24 +42,8 @@ class _FoodMenuNewState extends State<FoodMenuNew> {
     });
   }
 
-  // set visibleOfBottomBar(SetValues values) => setState(() {
-  //       print('values: $values');
-  //       _visibleOfBottomBar = values.value;
-  //       _count = countFromDB;
-  //     });
-
-  // set visibleOfBottomBar(SetValues values) {
-  //   setState(() {
-  //     _visibleOfBottomBar = values.value;
-  //     _count = countFromDB;
-  //     controller.showingBottomWidget.value = values.value; // Update the value
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
-    Get.put(HomePageController()).getShoppingData();
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -94,13 +77,11 @@ class _FoodMenuNewState extends State<FoodMenuNew> {
                 future: sqlService.isTableNotEmpty(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData && snapshot.data == true) {
-                    controller.isAlreadyInCartAll();
                     return ListOfFoodCard(
                       items: itemsDatum,
                       count: _count,
                     );
                   } else {
-                    controller.isAlreadyInCartAll();
                     return ListOfFoodCard(
                       items: itemsDatum,
                       count: itemsDatum.length,

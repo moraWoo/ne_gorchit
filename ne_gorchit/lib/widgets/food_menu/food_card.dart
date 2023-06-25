@@ -118,7 +118,7 @@ class _CardItemWidgetState extends State<CardItemWidget> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               setState(() {
                                 if (widget.item.countOfItems > 0) {
                                   widget.item.countOfItems--;

@@ -21,30 +21,23 @@ class HomePageController extends GetxController {
     loadDB();
   }
 
+  // Future<void> isAlreadyInCartAll() async {
+  //   try {
+  //     List<Map<String, dynamic>> cartList = await sqlService.getCartData();
+  //     (cartList.isNotEmpty) ? showingBottomWidget.value = true : null;
+  //     print('isAlreadyInCartAll loaded: ${showingBottomWidget.value}');
+  //   } catch (e) {
+  //     print(e);
+  //     showingBottomWidget.value = false;
+  //   }
+  // }
+
   Future<void> isAlreadyInCartAll() async {
     try {
-      List<Map<String, dynamic>> cartList = await sqlService.getCartData();
-      List<Datum> newData = [];
-
-      for (var item in cartList) {
-        newData.add(Datum(
-          name: item['name'],
-          description: item['description'],
-          id: item['id'],
-          image: item['image'],
-          price: item['price'],
-          idTable: item['idTable'],
-          fav: item['fav'],
-          rating: item['rating'],
-          countOfItems: item['countOfItems'],
-        ));
-      }
-
-      (newData.isNotEmpty) ? showingBottomWidget.value = true : null;
+      showingBottomWidget.value = await sqlService.isTableNotEmpty();
     } catch (e) {
       print(e);
-      showingBottomWidget.value =
-          false; // Обрабатываем ошибку и сбрасываем значение
+      showingBottomWidget.value = await sqlService.isTableNotEmpty();
     }
   }
 
@@ -69,17 +62,14 @@ class HomePageController extends GetxController {
 
       for (var datum in newData) {
         if (datum.id == id) {
-          // showingBottomWidget.value = true;
           return true;
         }
       }
-      // showingBottomWidget.value = false; // Сбрасываем значение, если не найдено
 
       return false;
     } catch (e) {
       print(e);
 
-      // showingBottomWidget.value = false; // Обрабатываем ошибку и сбрасываем значение
       return false;
     }
   }
@@ -146,6 +136,7 @@ class HomePageController extends GetxController {
     var result = await itemServices.addToCart(item);
     isLoading = false;
     update();
+    isAlreadyInCartAll();
     return result;
   }
 
@@ -160,6 +151,7 @@ class HomePageController extends GetxController {
       }
     }
     update();
+    isAlreadyInCartAll();
   }
 }
 
