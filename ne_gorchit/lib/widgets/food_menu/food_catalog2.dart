@@ -25,7 +25,7 @@ class SetValues {
 
 class _FoodMenuNewState extends State<FoodMenuNew> {
   final int _count = 0;
-  final HomePageController controller = Get.put(HomePageController());
+  final HomePageController controller = Get.find();
   SQLService sqlService = SQLService();
   int countFromDB = 0;
   List<Datum> itemsDatum = [];

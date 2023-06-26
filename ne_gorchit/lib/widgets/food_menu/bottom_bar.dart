@@ -81,14 +81,14 @@ class _bottomWidgetState extends State<bottomWidget> {
                       'Заказ',
                       style: TextStyle(color: Colors.black, fontSize: 20),
                     ),
-                    // Obx(() => Text(
-                    //       '${controller.sumOfPriceInCart()}',
-                    //       style: TextStyle(color: Colors.black, fontSize: 5),
-                    //     ))
-                    Text(
-                      '0.0',
-                      style: TextStyle(color: Colors.black),
-                    ),
+                    Obx(() => Text(
+                          '${controller.sumOfCart()}',
+                          style: TextStyle(color: Colors.black, fontSize: 15),
+                        ))
+                    // Text(
+                    //   '0.0',
+                    //   style: TextStyle(color: Colors.black),
+                    // ),
                   ],
                 ),
               ),

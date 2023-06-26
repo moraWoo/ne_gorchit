@@ -146,123 +146,6 @@ class SQLService {
     }
   }
 
-  // Future addToCart(Datum item) async {
-  //   try {
-  //     await openDB(); // Открываем базу данных, если она еще не открыта
-  //     await db?.transaction((txn) async {
-  //       var selectQryCart = 'SELECT id FROM cart_list WHERE id = ${item.id}';
-  //       var selectQryMenu = 'SELECT id FROM menu_items WHERE id = ${item.id}';
-
-  //       var resultCart = await txn.rawQuery(selectQryCart);
-  //       var resultMenu = await txn.rawQuery(selectQryMenu);
-
-  //       if (resultCart.isNotEmpty) {
-  //         var updateQryCart =
-  //             'UPDATE cart_list SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
-  //         await txn.rawUpdate(updateQryCart);
-  //         var updateQryMenu =
-  //             'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
-  //         await txn.rawUpdate(updateQryMenu);
-  //       } else {
-  //         var insertQryCart =
-  //             'INSERT INTO cart_list(name, image, price, fav, rating, description, idTable, countOfItems) VALUES("${item.name}", "${item.image}", "${item.price}", "${item.fav}", "${item.rating}", "${item.description}", "${item.idTable}", ${item.countOfItems})';
-  //         await txn.rawInsert(insertQryCart);
-
-  //         var updateQryMenu =
-  //             'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
-  //         await txn.rawUpdate(updateQryMenu);
-  //       }
-  //     });
-  //   } catch (e) {
-  //     print("ERROR IN SAVE DATA TO DB: $e");
-  //   }
-
-  //   await this.db?.transaction((txn) async {});
-  // }
-
-  // Future addToCart(Datum item) async {
-  //   try {
-  //     await openDB(); // Открываем базу данных, если она еще не открыта
-
-  //     // Получаем текущее значение последнего id в таблице cart_list
-  //     var selectQryCart = 'SELECT id FROM cart_list ORDER BY id DESC LIMIT 1';
-  //     var resultCart = await db!.rawQuery(selectQryCart);
-  //     var lastId = resultCart.isNotEmpty ? resultCart.first['id'] as int : 0;
-
-  //     // Генерируем новый id для текущего элемента
-  //     var newId = lastId + 1;
-
-  //     // Обновляем countOfItems в таблице menu_items
-  //     var updateQryMenu =
-  //         'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
-  //     await db!.rawUpdate(updateQryMenu);
-
-  //     // Вставляем новую запись в таблицу cart_list с новым id
-  //     var insertQryCart =
-  //         'INSERT INTO cart_list(id, name, image, price, fav, rating, description, idTable, countOfItems) VALUES($newId, "${item.name}", "${item.image}", "${item.price}", "${item.fav}", "${item.rating}", "${item.description}", "${item.idTable}", ${item.countOfItems})';
-  //     await db!.rawInsert(insertQryCart);
-  //   } catch (e) {
-  //     print("ERROR IN SAVE DATA TO DB: $e");
-  //   }
-  // }
-
-  // Future addToCart(Datum item) async {
-  //   try {
-  //     await openDB(); // Открываем базу данных, если она еще не открыта
-
-  //     // Получаем текущее значение последнего id в таблице cart_list
-  //     var selectQryCart = 'SELECT MAX(id) AS maxId FROM cart_list';
-  //     var resultCart = await db!.rawQuery(selectQryCart);
-  //     var lastId =
-  //         resultCart.isNotEmpty ? (resultCart.first['maxId'] as int?) ?? 0 : 0;
-
-  //     // Генерируем новый id для текущего элемента, используя id из menu_items
-  //     var newId = item.id;
-
-  //     // Обновляем countOfItems в таблице menu_items
-  //     var updateQryMenu =
-  //         'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
-  //     await db!.rawUpdate(updateQryMenu);
-
-  //     // Вставляем новую запись в таблицу cart_list с новым id
-  //     var insertQryCart =
-  //         'INSERT INTO cart_list(id, name, image, price, fav, rating, description, idTable, countOfItems) VALUES($newId, "${item.name}", "${item.image}", "${item.price}", "${item.fav}", "${item.rating}", "${item.description}", "${item.idTable}", ${item.countOfItems})';
-  //     await db!.rawInsert(insertQryCart);
-  //   } catch (e) {
-  //     print("ERROR IN SAVE DATA TO DB: $e");
-  //   }
-  // }
-
-  // Future addToCart(Datum item) async {
-  //   try {
-  //     await openDB(); // Открываем базу данных, если она еще не открыта
-
-  //     // Проверяем, существует ли элемент с заданным id в таблице cart_list
-  //     var selectQryCart = 'SELECT id FROM cart_list WHERE id = ${item.id}';
-  //     var resultCart = await db!.rawQuery(selectQryCart);
-  //     var existingItem = resultCart.isNotEmpty;
-
-  //     if (existingItem) {
-  //       // Обновляем countOfItems в таблице cart_list
-  //       var updateQryCart =
-  //           'UPDATE cart_list SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
-  //       await db!.rawUpdate(updateQryCart);
-  //     } else {
-  //       // Вставляем новую запись в таблицу cart_list с заданным id
-  //       var insertQryCart =
-  //           'INSERT INTO cart_list(id, name, image, price, fav, rating, description, idTable, countOfItems) VALUES(${item.id}, "${item.name}", "${item.image}", "${item.price}", "${item.fav}", "${item.rating}", "${item.description}", "${item.idTable}", ${item.countOfItems})';
-  //       await db!.rawInsert(insertQryCart);
-  //     }
-
-  //     // Обновляем countOfItems в таблице menu_items
-  //     var updateQryMenu =
-  //         'UPDATE menu_items SET countOfItems = ${item.countOfItems} WHERE id = ${item.id}';
-  //     await db!.rawUpdate(updateQryMenu);
-  //   } catch (e) {
-  //     print("ERROR IN SAVE DATA TO DB: $e");
-  //   }
-  // }
-
   Future addToCart(Datum item) async {
     try {
       await openDB(); // Открываем базу данных, если она еще не открыта
@@ -339,14 +222,47 @@ class SQLService {
     }
   }
 
-  Future<bool> isTableNotEmpty() async {
-    var qry = "SELECT COUNT(*) FROM cart_list";
-    var result = await this.db?.rawQuery(qry);
+  // Future<bool> isTableNotEmpty() async {
+  //   try {
+  //     await openDB(); // Открываем базу данных, если она еще не открыта
 
-    if (result != null && result.isNotEmpty) {
-      return true;
+  //     var qry = "SELECT COUNT(*) FROM cart_list";
+  //     var result;
+
+  //     await db?.transaction((txn) async {
+  //       result = await txn.rawQuery(qry);
+  //     });
+
+  //     if (result != null && result.isNotEmpty) {
+  //       return true;
+  //     }
+
+  //     return false;
+  //   } catch (e) {
+  //     print("ERROR IN SAVE DATA TO DB: $e");
+  //     return false;
+  //   }
+  // }
+  Future<bool> isTableNotEmpty() async {
+    try {
+      await openDB(); // Open the database if it's not already open
+
+      var qry = "SELECT COUNT(*) FROM cart_list";
+      var result;
+
+      await db?.transaction((txn) async {
+        result = await txn.rawQuery(qry);
+      });
+
+      if (result != null && result.isNotEmpty) {
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      print("ERROR IN isTableNotEmpty: $e");
+      return false;
     }
-    return false;
   }
 
   Future<List<Datum>> getCartList() async {

@@ -8,12 +8,13 @@ class HomePageController extends GetxController {
   ItemServices itemServices = ItemServices();
   List<Datum> items = [];
   List<Datum> cartItems = [];
+  List<Datum> cartDataList = [];
+
   bool isLoading = true;
+
   SQLService sqlService = SQLService();
   RxBool showingBottomWidget = false.obs;
   RxDouble sumOfCart = 0.0.obs;
-
-  List<Datum> cartList = [];
 
   @override
   void onInit() {
@@ -21,23 +22,13 @@ class HomePageController extends GetxController {
     loadDB();
   }
 
-  // Future<void> isAlreadyInCartAll() async {
-  //   try {
-  //     List<Map<String, dynamic>> cartList = await sqlService.getCartData();
-  //     (cartList.isNotEmpty) ? showingBottomWidget.value = true : null;
-  //     print('isAlreadyInCartAll loaded: ${showingBottomWidget.value}');
-  //   } catch (e) {
-  //     print(e);
-  //     showingBottomWidget.value = false;
-  //   }
-  // }
-
   Future<void> isAlreadyInCartAll() async {
     try {
       showingBottomWidget.value = await sqlService.isTableNotEmpty();
+      print('showingBottomWidget.value1: ${showingBottomWidget.value}');
     } catch (e) {
       print(e);
-      showingBottomWidget.value = await sqlService.isTableNotEmpty();
+      showingBottomWidget.value = false;
     }
   }
 
@@ -108,7 +99,6 @@ class HomePageController extends GetxController {
   Future<List<Datum>> getCartData() async {
     try {
       List<Map<String, dynamic>> cartData = await sqlService.getCartData();
-      List<Datum> cartDataList = [];
 
       for (var item in cartData) {
         cartDataList.add(Datum(
@@ -123,6 +113,7 @@ class HomePageController extends GetxController {
           countOfItems: item['countOfItems'],
         ));
       }
+
       return cartDataList; // Вернуть преобразованный список
     } catch (e) {
       print(e);
@@ -136,22 +127,36 @@ class HomePageController extends GetxController {
     var result = await itemServices.addToCart(item);
     isLoading = false;
     update();
-    isAlreadyInCartAll();
+    showingBottomWidget.value = true;
+    sumOfCart.value += item.price;
+
     return result;
   }
 
   removeFromCart(Datum item, int id) async {
     await itemServices.removeFromCart(item, item.id);
-    Datum removedItem;
 
-    for (var item in cartItems) {
-      if (item.id == id) {
-        removedItem = item;
-        break;
-      }
+    cartItems.removeWhere((cartItem) => cartItem.id == id);
+
+    bool isNotEmpty = await sqlService.isTableNotEmpty();
+    print('isNotEmpty: $isNotEmpty');
+    if (!isNotEmpty) {
+      showingBottomWidget.value = true;
+    } else {
+      showingBottomWidget.value = false;
+      sumOfCart.value = 0.0;
     }
+
+    // if (!isNotEmpty || cartData.isNotEmpty) {
+    //   showingBottomWidget.value = false;
+    //   sumOfCart.value = 0.0;
+    // } else {
+    //   showingBottomWidget.value = true;
+    // }
+
+    sumOfCart.value -= item.price; // Уменьшение значения sumOfCart
+
     update();
-    isAlreadyInCartAll();
   }
 }
 
