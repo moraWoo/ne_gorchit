@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 class CartPage extends StatelessWidget {
   var imgUrl = 'http://localhost:4000/';
+  List<Datum> cartItems = [];
   final HomePageController controller = Get.put(HomePageController());
 
   List<Widget> generateCart(BuildContext context, List<Datum> menuList) {
@@ -57,8 +58,8 @@ class CartPage extends StatelessWidget {
                                   alignment: Alignment.bottomRight,
                                   child: InkResponse(
                                     onTap: () {
-                                      Get.find<HomePageController>()
-                                          .removeFromCart(datum, datum.id);
+                                      controller.removeFromCart(
+                                          datum, datum.id);
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         SnackBar(
@@ -81,7 +82,13 @@ class CartPage extends StatelessWidget {
                             const SizedBox(
                               height: 5.0,
                             ),
-                            Text("Цена: ${datum.price.toString()}"),
+                            Text(
+                                "Количествр: ${(datum.countOfItems).toString()}"),
+                            const SizedBox(
+                              height: 5.0,
+                            ),
+                            Text(
+                                "Всего: ${(datum.price * datum.countOfItems).toString()}"),
                           ],
                         ),
                       ),
@@ -101,9 +108,14 @@ class CartPage extends StatelessWidget {
     return "$sum ₸";
   }
 
+  getCartItems() async {
+    cartItems = await controller.getCartData();
+    return cartItems;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<HomePageController>();
+    // final controller = Get.find<HomePageController>();
 
     // TODO: implement build
     return Scaffold(

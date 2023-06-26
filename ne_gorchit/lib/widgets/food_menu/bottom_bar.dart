@@ -18,15 +18,6 @@ class bottomWidget extends StatefulWidget {
 class _bottomWidgetState extends State<bottomWidget> {
   final HomePageController controller = Get.put(HomePageController());
 
-  String getItemTotal(List<Datum> items) {
-    List<Datum> cartItems = controller.cartItems;
-    double sum = 0.0;
-    cartItems.forEach((datum) {
-      sum += datum.price;
-    });
-    return "$sum ₸";
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -85,10 +76,6 @@ class _bottomWidgetState extends State<bottomWidget> {
                           '${controller.sumOfCart()}',
                           style: TextStyle(color: Colors.black, fontSize: 15),
                         ))
-                    // Text(
-                    //   '0.0',
-                    //   style: TextStyle(color: Colors.black),
-                    // ),
                   ],
                 ),
               ),

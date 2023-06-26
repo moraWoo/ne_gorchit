@@ -23,10 +23,6 @@ class ListOfFoodCard extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  // Future<bool> getShowButtons(Datum item) async {
-  //   return await controller.isAlreadyInCart(item.id);
-  // }
-
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: items.length,

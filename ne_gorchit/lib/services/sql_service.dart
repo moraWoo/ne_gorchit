@@ -222,27 +222,6 @@ class SQLService {
     }
   }
 
-  // Future<bool> isTableNotEmpty() async {
-  //   try {
-  //     await openDB(); // Открываем базу данных, если она еще не открыта
-
-  //     var qry = "SELECT COUNT(*) FROM cart_list";
-  //     var result;
-
-  //     await db?.transaction((txn) async {
-  //       result = await txn.rawQuery(qry);
-  //     });
-
-  //     if (result != null && result.isNotEmpty) {
-  //       return true;
-  //     }
-
-  //     return false;
-  //   } catch (e) {
-  //     print("ERROR IN SAVE DATA TO DB: $e");
-  //     return false;
-  //   }
-  // }
   Future<bool> isTableNotEmpty() async {
     try {
       await openDB(); // Open the database if it's not already open

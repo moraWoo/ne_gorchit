@@ -16,25 +16,16 @@ class HomePageController extends GetxController {
   RxBool showingBottomWidget = false.obs;
   RxDouble sumOfCart = 0.0.obs;
 
+  getCart() async {
+    cartItems = await getCartData();
+  }
+
   @override
   void onInit() {
     super.onInit();
     loadDB();
+    getCart();
   }
-
-  // Future<void> isAlreadyInCartAll() async {
-  //   try {
-  //     var showBotWidget = await sqlService.isTableNotEmpty();
-  //     print('showBotWidget: ${showingBottomWidget.value}');
-  //     print('showBotWidget: ${showBotWidget}');
-
-  //     showingBottomWidget.value = showBotWidget;
-  //     print('showingBottomWidget.value1: ${showingBottomWidget.value}');
-  //   } catch (e) {
-  //     print(e);
-  //     showingBottomWidget.value = false;
-  //   }
-  // }
 
   Future<void> isAlreadyInCartAll2() async {
     try {
@@ -152,24 +143,6 @@ class HomePageController extends GetxController {
     return result;
   }
 
-  // removeFromCart(Datum item, int id) async {
-  //   await itemServices.removeFromCart(item, item.id);
-
-  //   cartItems.removeWhere((cartItem) => cartItem.id == id);
-
-  //   bool isNotEmpty = await sqlService.isTableNotEmpty();
-  //   print('isNotEmpty: $isNotEmpty');
-  //   if (!isNotEmpty) {
-  //     showingBottomWidget.value = true;
-  //   } else {
-  //     showingBottomWidget.value = false;
-  //     // sumOfCart.value = 0.0;
-  //   }
-
-  //   sumOfCart.value -= item.price; // Уменьшение значения sumOfCart
-
-  //   update();
-  // }
   removeFromCart(Datum item, int id) async {
     await itemServices.removeFromCart(item, item.id);
 
