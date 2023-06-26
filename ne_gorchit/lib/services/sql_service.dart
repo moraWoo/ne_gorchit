@@ -265,6 +265,30 @@ class SQLService {
     }
   }
 
+  Future<bool> isTableEmpty() async {
+    // Изменено на isTableEmpty
+    try {
+      await openDB(); // Open the database if it's not already open
+
+      var qry = "SELECT COUNT(*) FROM cart_list";
+      var result;
+
+      await db?.transaction((txn) async {
+        result = await txn.rawQuery(qry);
+      });
+
+      if (result != null && result.isNotEmpty && result[0]['COUNT(*)'] == 0) {
+        // Добавлено условие для проверки на пустоту
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      print("ERROR IN isTableEmpty: $e");
+      return false;
+    }
+  }
+
   Future<List<Datum>> getCartList() async {
     final db = await openDB();
     var result = await db?.query(_tableNameCart);

@@ -38,7 +38,7 @@ class HomePageController extends GetxController {
 
   Future<void> isAlreadyInCartAll2() async {
     try {
-      var showBotWidget = await sqlService.isTableNotEmpty();
+      var showBotWidget = await sqlService.isTableEmpty();
       print('showBotWidget: ${showingBottomWidget.value}');
       print('showBotWidget: ${showBotWidget}');
 
@@ -152,19 +152,34 @@ class HomePageController extends GetxController {
     return result;
   }
 
+  // removeFromCart(Datum item, int id) async {
+  //   await itemServices.removeFromCart(item, item.id);
+
+  //   cartItems.removeWhere((cartItem) => cartItem.id == id);
+
+  //   bool isNotEmpty = await sqlService.isTableNotEmpty();
+  //   print('isNotEmpty: $isNotEmpty');
+  //   if (!isNotEmpty) {
+  //     showingBottomWidget.value = true;
+  //   } else {
+  //     showingBottomWidget.value = false;
+  //     // sumOfCart.value = 0.0;
+  //   }
+
+  //   sumOfCart.value -= item.price; // Уменьшение значения sumOfCart
+
+  //   update();
+  // }
   removeFromCart(Datum item, int id) async {
     await itemServices.removeFromCart(item, item.id);
 
     cartItems.removeWhere((cartItem) => cartItem.id == id);
 
-    bool isNotEmpty = await sqlService.isTableNotEmpty();
+    bool isNotEmpty =
+        await sqlService.isTableEmpty(); // Изменено на isTableEmpty
     print('isNotEmpty: $isNotEmpty');
-    if (!isNotEmpty) {
-      showingBottomWidget.value = true;
-    } else {
-      showingBottomWidget.value = false;
-      // sumOfCart.value = 0.0;
-    }
+
+    showingBottomWidget.value = !isNotEmpty; // Изменено на !isNotEmpty
 
     sumOfCart.value -= item.price; // Уменьшение значения sumOfCart
 
