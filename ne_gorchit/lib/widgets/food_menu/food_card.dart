@@ -19,7 +19,6 @@ class ListOfFoodCard extends StatelessWidget {
 
   ListOfFoodCard({
     required this.items,
-    // required this.callback,
     required this.count,
     Key? key,
   }) : super(key: key);

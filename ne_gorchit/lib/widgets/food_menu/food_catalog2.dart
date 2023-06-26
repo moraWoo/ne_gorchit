@@ -40,6 +40,7 @@ class _FoodMenuNewState extends State<FoodMenuNew> {
         itemsDatum = data;
       });
     });
+    // controller.isAlreadyInCartAll();
   }
 
   @override

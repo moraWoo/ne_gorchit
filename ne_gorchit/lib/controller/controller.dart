@@ -22,9 +22,27 @@ class HomePageController extends GetxController {
     loadDB();
   }
 
-  Future<void> isAlreadyInCartAll() async {
+  // Future<void> isAlreadyInCartAll() async {
+  //   try {
+  //     var showBotWidget = await sqlService.isTableNotEmpty();
+  //     print('showBotWidget: ${showingBottomWidget.value}');
+  //     print('showBotWidget: ${showBotWidget}');
+
+  //     showingBottomWidget.value = showBotWidget;
+  //     print('showingBottomWidget.value1: ${showingBottomWidget.value}');
+  //   } catch (e) {
+  //     print(e);
+  //     showingBottomWidget.value = false;
+  //   }
+  // }
+
+  Future<void> isAlreadyInCartAll2() async {
     try {
-      showingBottomWidget.value = await sqlService.isTableNotEmpty();
+      var showBotWidget = await sqlService.isTableNotEmpty();
+      print('showBotWidget: ${showingBottomWidget.value}');
+      print('showBotWidget: ${showBotWidget}');
+
+      showingBottomWidget.value = showBotWidget;
       print('showingBottomWidget.value1: ${showingBottomWidget.value}');
     } catch (e) {
       print(e);
@@ -128,6 +146,7 @@ class HomePageController extends GetxController {
     isLoading = false;
     update();
     showingBottomWidget.value = true;
+    print('item.price: ${item.price}');
     sumOfCart.value += item.price;
 
     return result;
@@ -144,15 +163,8 @@ class HomePageController extends GetxController {
       showingBottomWidget.value = true;
     } else {
       showingBottomWidget.value = false;
-      sumOfCart.value = 0.0;
+      // sumOfCart.value = 0.0;
     }
-
-    // if (!isNotEmpty || cartData.isNotEmpty) {
-    //   showingBottomWidget.value = false;
-    //   sumOfCart.value = 0.0;
-    // } else {
-    //   showingBottomWidget.value = true;
-    // }
 
     sumOfCart.value -= item.price; // Уменьшение значения sumOfCart
 
