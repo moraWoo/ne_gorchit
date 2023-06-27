@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ne_gorchit/controller/controller.dart';
-import 'package:ne_gorchit/model/menu.dart';
 
 class bottomWidget extends StatefulWidget {
-  final int count;
-
   const bottomWidget({
     Key? key,
-    required this.count,
   }) : super(key: key);
 
   @override

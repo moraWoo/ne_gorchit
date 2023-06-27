@@ -16,15 +16,10 @@ class HomePageController extends GetxController {
   RxBool showingBottomWidget = false.obs;
   RxDouble sumOfCart = 0.0.obs;
 
-  getCart() async {
-    cartItems = await getCartData();
-  }
-
   @override
   void onInit() {
     super.onInit();
     loadDB();
-    getCart();
   }
 
   Future<void> isAlreadyInCartAll2() async {
@@ -107,6 +102,8 @@ class HomePageController extends GetxController {
 
   Future<List<Datum>> getCartData() async {
     try {
+      cartDataList = [];
+      cartItems = [];
       List<Map<String, dynamic>> cartData = await sqlService.getCartData();
 
       for (var item in cartData) {
@@ -122,6 +119,8 @@ class HomePageController extends GetxController {
           countOfItems: item['countOfItems'],
         ));
       }
+      print('cartDataList1: $cartDataList');
+      print('cartItems: $cartItems');
 
       return cartDataList; // Вернуть преобразованный список
     } catch (e) {
@@ -138,7 +137,8 @@ class HomePageController extends GetxController {
     update();
     showingBottomWidget.value = true;
     print('item.price: ${item.price}');
-    sumOfCart.value += item.price;
+    // sumOfCart.value += item.price;
+    calculateSumOfCart();
 
     return result;
   }
@@ -154,9 +154,22 @@ class HomePageController extends GetxController {
 
     showingBottomWidget.value = !isNotEmpty; // Изменено на !isNotEmpty
 
-    sumOfCart.value -= item.price; // Уменьшение значения sumOfCart
+    // sumOfCart.value -= item.price; // Уменьшение значения sumOfCart
+    calculateSumOfCart();
 
     update();
+  }
+
+  void calculateSumOfCart() async {
+    List<Datum> cartData = await getCartData();
+    double sum = 0;
+
+    for (var item in cartData) {
+      double itemTotalPrice = item.price * item.countOfItems;
+      sum += itemTotalPrice;
+    }
+
+    sumOfCart.value = sum;
   }
 }
 

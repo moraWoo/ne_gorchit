@@ -13,13 +13,13 @@ import 'package:ne_gorchit/widgets/name_description.dart';
 class ListOfFoodCard extends StatelessWidget {
   final List<Datum> items;
   // final BottomVisibleCallBack callback;
-  final int count;
+  // final int count;
   var imgUrl = 'http://localhost:4000/';
   final HomePageController controller = Get.put(HomePageController());
 
   ListOfFoodCard({
     required this.items,
-    required this.count,
+    // required this.count,
     Key? key,
   }) : super(key: key);
 

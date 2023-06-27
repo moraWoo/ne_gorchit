@@ -19,12 +19,10 @@ class FoodMenuNew extends StatefulWidget {
 
 class SetValues {
   final bool value;
-  final int count;
-  SetValues(this.value, this.count);
+  SetValues(this.value);
 }
 
 class _FoodMenuNewState extends State<FoodMenuNew> {
-  final int _count = 0;
   final HomePageController controller = Get.find();
   SQLService sqlService = SQLService();
   int countFromDB = 0;
@@ -40,7 +38,6 @@ class _FoodMenuNewState extends State<FoodMenuNew> {
         itemsDatum = data;
       });
     });
-    // controller.isAlreadyInCartAll();
   }
 
   @override
@@ -80,12 +77,10 @@ class _FoodMenuNewState extends State<FoodMenuNew> {
                   if (snapshot.hasData && snapshot.data == true) {
                     return ListOfFoodCard(
                       items: itemsDatum,
-                      count: _count,
                     );
                   } else {
                     return ListOfFoodCard(
                       items: itemsDatum,
-                      count: itemsDatum.length,
                     );
                   }
                 });
@@ -99,7 +94,7 @@ class _FoodMenuNewState extends State<FoodMenuNew> {
       bottomNavigationBar: Obx(
         () => Visibility(
           visible: controller.showingBottomWidget.value,
-          child: bottomWidget(count: _count),
+          child: bottomWidget(),
         ),
       ),
     );
